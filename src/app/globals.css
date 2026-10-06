@@ -1,0 +1,638 @@
+@import "tailwindcss";
+
+:root {
+  --background: #05070b;
+  --foreground: #ffffff;
+  --brand-blue: #1677FF;
+  --accent-on-dark: #1677FF;
+  --accent-on-light: #0D52B8;
+  --accent-hover-dark: #00E599;
+  --accent-hover-light: #0A3678;
+  --accent-pixel: #1677FF;
+  --accent-interactive: #1677FF;
+  --mouse-x: 50vw;
+  --mouse-y: 50vh;
+  --mouse-x-norm: 0;
+  --mouse-y-norm: 0;
+  --mouse-x-b: 50vw;
+  --mouse-y-b: 50vh;
+  --nf-mobile-vh: 100svh;
+}
+
+/* Touch optimization for mobile buttons */
+.touch-action-manipulation {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Context-aware section token overrides */
+.dark-section {
+  --element-accent: var(--accent-on-dark);
+  --element-hover: var(--accent-hover-dark);
+}
+
+.light-section {
+  --element-accent: var(--accent-on-light);
+  --element-hover: var(--accent-hover-light);
+}
+
+/* Smooth color transition helper */
+.color-transition {
+  transition: color 300ms ease, background-color 300ms ease, border-color 300ms ease, opacity 300ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pointer-parallax-sm {
+    transform: translate3d(calc(var(--mouse-x-norm) * 8px), calc(var(--mouse-y-norm) * 8px), 0);
+    will-change: transform;
+  }
+  .pointer-parallax-rev {
+    transform: translate3d(calc(var(--mouse-x-norm) * -8px), calc(var(--mouse-y-norm) * -8px), 0);
+    will-change: transform;
+  }
+  .pointer-tilt-img {
+    transform: perspective(1000px) rotateX(calc(var(--mouse-y-norm) * -0.5deg)) rotateY(calc(var(--mouse-x-norm) * 0.5deg));
+    will-change: transform;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-poppins), sans-serif;
+  --font-montserrat: var(--font-montserrat), sans-serif;
+  --font-poppins: var(--font-poppins), sans-serif;
+  --font-pixel: var(--font-pixelify), monospace;
+}
+
+.font-montserrat {
+  font-family: var(--font-montserrat), sans-serif;
+}
+
+.font-poppins {
+  font-family: var(--font-poppins), sans-serif;
+}
+
+.font-pixel {
+  font-family: var(--font-pixelify), monospace;
+}
+
+/* Hide scrollbar for Chrome, Safari, Edge, Firefox while maintaining scroll functionality */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE & Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+
+*, ::before, ::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  /* clip prevents horizontal paint overflow without creating a nested
+     scroll container that can break position: sticky in iOS/WebKit. */
+  overflow-x: clip;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+}
+
+/* Hide visible page scrollbar globally across desktop and mobile while preserving full scrolling */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* HERO LOWER CONTENT — MOBILE SAFE + DESKTOP EDITORIAL */
+.heroBottom {
+  position: absolute;
+  left: max(clamp(20px, 2.5vw, 40px), env(safe-area-inset-left));
+  bottom: max(clamp(20px, 3.5vh, 40px), env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: clamp(48px, 8vw, 130px);
+  z-index: 3;
+  max-width: calc(100vw - 40px);
+}
+
+.hero-logo-wrapper {
+  width: clamp(300px, 40vw, 620px);
+  max-width: 85vw;
+  will-change: transform, opacity;
+}
+
+@media (min-width: 769px) {
+  .hero-logo-wrapper {
+    width: clamp(400px, 50vw, 780px);
+  }
+}
+
+.service-item {
+  display: block;
+  width: fit-content;
+  padding: 0;
+  margin: 0;
+  background: #ffffff;
+  color: #111111;
+  border: 0;
+  border-radius: 0;
+  font-family: var(--font-montserrat), "Montserrat", sans-serif;
+  font-size: clamp(12px, 0.9vw, 17px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.service-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .service-item:hover {
+    opacity: 0.75 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroBottom {
+    left: max(16px, env(safe-area-inset-left));
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(18px, calc(env(safe-area-inset-bottom) + 8px));
+    max-width: none;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(28px, 4vh, 38px);
+  }
+
+  /* Mobile-only visual order: service labels sit cleanly above the logo.
+     Desktop keeps the original side-by-side composition. */
+  .service-list {
+    order: 1;
+    width: 100%;
+    margin-bottom: clamp(4px, 0.8vh, 8px);
+  }
+
+  .hero-logo-wrapper {
+    order: 2;
+    width: min(88vw, 360px);
+    max-width: calc(100vw - 32px);
+  }
+
+  .service-item {
+    font-size: clamp(10px, 2.85vw, 11.5px);
+    line-height: 1.1;
+    padding: 1px 2px;
+  }
+
+  .service-list nav,
+  .service-list ul {
+    width: fit-content;
+    max-width: calc(100vw - 32px);
+  }
+
+  .service-list ul {
+    gap: 4px;
+  }
+
+  .service-item,
+  .service-item-text,
+  .hero-logo-wrapper {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+
+  .hero-side-light {
+    display: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .heroBottom {
+    left: max(14px, env(safe-area-inset-left));
+    right: max(14px, env(safe-area-inset-right));
+    gap: 22px;
+  }
+
+  .service-list {
+    margin-bottom: 2px;
+  }
+
+  .hero-logo-wrapper {
+    width: min(86vw, 330px);
+  }
+
+  .service-item {
+    font-size: 9.5px;
+  }
+
+  .service-list ul {
+    gap: 3px;
+  }
+}
+
+@media (max-height: 640px) and (max-width: 768px) {
+  .heroBottom {
+    bottom: max(12px, calc(env(safe-area-inset-bottom) + 4px));
+    gap: 18px;
+  }
+
+  .service-list {
+    margin-bottom: 0;
+  }
+
+  .hero-logo-wrapper {
+    width: min(84vw, 320px);
+  }
+
+  .service-item {
+    font-size: 8.75px;
+    line-height: 1.08;
+  }
+
+  .service-list ul {
+    gap: 2px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 540px) {
+  .heroBottom {
+    left: max(16px, env(safe-area-inset-left));
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    flex-direction: row;
+    align-items: flex-end;
+    gap: clamp(22px, 5vw, 48px);
+  }
+
+  .hero-logo-wrapper {
+    width: min(38vw, 300px);
+  }
+
+  .service-item {
+    font-size: 9px;
+  }
+}
+
+/* SCROLL TO EXPLORE INDICATOR */
+.scroll-indicator {
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+}
+
+.scroll-indicator-line {
+  width: 14px;
+  height: 2px;
+  background: #1677FF;
+}
+
+.wat-we-doen-label {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  background: #000000;
+  color: #ffffff;
+  line-height: 1;
+  border: none;
+  border-radius: 0;
+  opacity: 1;
+}
+
+/* 3D HERO "A" ANIMATION HIERARCHY — SAFARI & MOBILE ACCELERATED */
+.hero-a-stage {
+  perspective: 1200px;
+  -webkit-perspective: 1200px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.hero-a-float {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate3d(0, 0, 0);
+
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.hero-a-interaction,
+.hero-a-object {
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* INTRO BRANDING ANIMATION — IOS SAFARI ACCELERATED */
+.intro-brackets-animation,
+.intro-icon-animation,
+.intro-logo-animation {
+  will-change: transform, opacity;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+
+/* SERVICE TITLE MASKED BOTTOM-UP REVEAL */
+.title-mask {
+  overflow: hidden;
+  display: block;
+}
+
+.title-inner {
+  display: block;
+  will-change: transform, opacity;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+/* WHAT WE DO SECTION — STRICT STAGE CLIPPING
+   Mobile/tablet use browser-native sticky positioning instead of GSAP pinning.
+   Do not force the sticky wrapper back to position:relative on touch layouts. */
+.wat-we-doen-sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+  overflow: clip;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+}
+
+.wat-we-doen-stage {
+  position: relative;
+  overflow: hidden;
+  overflow: clip;
+  width: 100%;
+  height: 100%;
+}
+
+/* Dynamic viewport height is safe once the layout is not relying on the
+   collapsing mobile browser toolbar. */
+@media (min-width: 768px) {
+  .wat-we-doen-sticky {
+    height: 100dvh;
+  }
+}
+
+@media (min-width: 1024px) {
+  .wat-we-doen-sticky {
+    position: relative;
+    top: auto;
+  }
+}
+
+/* Shared mobile storytelling stage fallback for Safari/WKWebView. */
+.mobile-scroll-sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+
+
+/* HERO MOBILE / SAFARI STABILITY */
+.hero,
+.shared-3d-background {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+@supports (height: 100dvh) {
+  .hero,
+  .shared-3d-background {
+    height: 100svh;
+    min-height: 100svh;
+  }
+}
+
+@media (min-width: 769px) {
+  .hero,
+  .shared-3d-background {
+    height: 100dvh;
+    min-height: 100dvh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-a-float,
+  .hero-a-interaction,
+  .hero-a-object,
+  .hero-logo-wrapper,
+  .service-item {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* SITE-WIDE MOBILE / TOUCH STABILITY */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overscroll-behavior-x: none;
+}
+
+body {
+  min-height: 100%;
+  overscroll-behavior-x: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a,
+button,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+img,
+video {
+  max-width: 100%;
+}
+
+@media (pointer: coarse) {
+  a,
+  button {
+    touch-action: manipulation;
+  }
+}
+
+@media (max-width: 768px) {
+  .title-inner,
+  .service-panel,
+  .project-card-inner,
+  .mobile-usp-card {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  .intro-brackets-animation,
+  .intro-icon-animation,
+  .intro-logo-animation {
+    will-change: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .wat-we-doen-stage,
+  .service-panel,
+  .panel-image {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  .service-panel {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .panel-image {
+    transform-origin: center center;
+  }
+}
+
+
+@supports (overflow: clip) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+}
+
+@media (max-width: 1023px) {
+  .wat-we-doen-sticky,
+  #deliverables > div:first-of-type,
+  #statement > div[aria-label] {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+}
+
+
+/* MOBILE SCROLLTRIGGER / STICKY SAFETY
+   Never turn the main page wrappers into vertical scrolling containers.
+   Sticky storytelling sections must remain attached to the document scroller. */
+.page,
+.foreground,
+.shared-background-range,
+.wat-we-doen-scroll {
+  overflow-y: visible;
+}
+
+@media (max-width: 1023px) {
+  .wat-we-doen-sticky,
+  #deliverables > div:first-child {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+}
+
+
+/* MOBILE ANIMATION RUNTIME — visual design unchanged, rendering only */
+@media (max-width: 1023px) {
+  body {
+    touch-action: pan-y;
+  }
+
+  .wat-we-doen-stage,
+  .service-panel,
+  .panel-image,
+  #deliverables [class*="will-change-transform"],
+  #statement h2,
+  #founded-on-a-vision [class*="will-change-transform"] {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  .service-panel,
+  .panel-image,
+  #statement h2 {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+
+  #deliverables video,
+  #deliverables img {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+}
+
+@media (max-width: 768px) {
+  .wat-we-doen-stage,
+  #deliverables,
+  #statement,
+  #our-usps,
+  #founded-on-a-vision {
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+
+/* MOBILE STABLE VIEWPORT
+   Capture the real initial viewport height in JS and keep scroll-story stages
+   stable while the browser URL bar expands/collapses. Orientation updates it. */
+@media (max-width: 1023px) {
+  .hero,
+  .shared-3d-background,
+  .wat-we-doen-sticky,
+  #deliverables > .mobile-scroll-sticky,
+  .statement-stage {
+    height: var(--nf-mobile-vh, 100svh);
+    min-height: var(--nf-mobile-vh, 100svh);
+  }
+}
