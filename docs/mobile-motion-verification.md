@@ -1,6 +1,6 @@
 # Mobile motion verification
 
-Use Node 24 LTS. The home page respects the phone's `prefers-reduced-motion` setting. With Reduce Motion enabled, several entrances are intentionally static; service panels use opacity transitions. The 3D hero is intentionally desktop-only. Neither of these is a failed mobile reveal.
+Use Node 24 LTS. The home page respects the phone's `prefers-reduced-motion` setting. With Reduce Motion enabled, several entrances are intentionally static; service panels switch immediately without a crossfade. The 3D hero is intentionally desktop-only. Neither of these is a failed mobile reveal.
 
 ## Repeatable browser checks
 
@@ -62,3 +62,9 @@ npm run test:intro-recovery
 The test uses a 390px touch viewport. With JavaScript disabled or Next script requests aborted, the overlay must be hidden, the hero logo visible, and scrolling usable. With an image decode promise that never resolves, the intro must start by the asset deadline and complete without leaving scroll locked. A normal run must also finish and reveal the hero. These intentionally injected failures do not prove a particular phone has blocked JavaScript.
 
 The fixes live on `fix/mobile-reveal-fallback` until PR #1 is merged; the main production URL continues to serve the previous code meanwhile. Verify the PR preview before comparing results.
+
+## Service stepped mask verification
+
+Run `npm run test:service-steps` after installing Playwright Chromium and building. It tests 375/390/430px touch viewports plus reduced motion. At the middle of the first wipe, hit testing must find the old panel on the left and the next panel on the right, proving a visible stepped edge. All panels must stay at opacity 1. The mobile clip container must have no transform; child image zoom is retained. The stage must stay sticky, reach the final panel and reverse. Reduced motion switches the same masks immediately instead of fading or running a large wipe.
+
+On an actual phone, turn Reduce Motion off for the animated wipe check, then scroll slowly between every service. The incoming image/text must share a staircase edge, not dissolve. Repeat upward, rotate and repeat. With Reduce Motion on, expect immediate panel changes without fading. Desktop polygons, pinning and timing are unchanged. Physical-device compositing still needs verification.

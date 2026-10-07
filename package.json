@@ -11,7 +11,8 @@
     "start": "next start",
     "lint": "eslint",
     "test:mobile-motion": "node scripts/check-mobile-motion.mjs",
-    "test:intro-recovery": "node scripts/check-intro-recovery.mjs"
+    "test:intro-recovery": "node scripts/check-intro-recovery.mjs",
+    "test:service-steps": "node scripts/check-service-steps.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

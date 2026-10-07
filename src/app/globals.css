@@ -636,3 +636,14 @@ video {
     min-height: var(--nf-mobile-vh, 100svh);
   }
 }
+
+/* Keep the animated service mask on an untransformed mobile container.
+   Image zoom remains on the child; it must not promote the clipping panel. */
+@media (max-width: 1023px) {
+  #wat-we-doen .service-panel {
+    -webkit-transform: none;
+    transform: none;
+    -webkit-backface-visibility: visible;
+    backface-visibility: visible;
+  }
+}
