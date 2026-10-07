@@ -260,7 +260,7 @@ export default function StatementSection() {
     }
   );
 
-  const headingClass = "m-0 flex w-full flex-col items-center justify-center gap-[clamp(6px,1.4svh,14px)] text-center font-pixel font-bold uppercase leading-[0.86] tracking-[-0.035em]";
+  const headingClass = "m-0 flex w-full flex-col items-center justify-center gap-1 md:gap-[clamp(6px,1.4svh,14px)] text-center font-pixel font-bold uppercase leading-[0.86] tracking-[-0.035em]";
 
   const renderWowLetters = (onBlack: boolean) => (
     <>
@@ -281,14 +281,14 @@ export default function StatementSection() {
   const renderWords = () => words.map((word, index) => (
     <span
       key={word}
-      className="block w-full py-[0.025em]"
+      className="block w-full py-0 md:py-[0.025em]"
     >
       <span
         ref={index === 4 ? wowRef : undefined}
         className={`${index === 4 ? "relative left-1/2 block w-max -translate-x-1/2" : "relative inline-block"} whitespace-nowrap px-[0.06em] ${
           index === 4
-            ? "text-[62px] md:text-[clamp(68px,min(16vw,20svh),220px)]"
-            : "text-[62px] md:text-[clamp(60px,min(14vw,18svh),205px)]"
+            ? "text-[58px] md:text-[clamp(68px,min(16vw,20svh),220px)]"
+            : "text-[58px] md:text-[clamp(60px,min(14vw,18svh),205px)]"
         } text-black`}
       >
         <span>{index === 4 ? renderWowLetters(false) : word}</span>
@@ -316,7 +316,7 @@ export default function StatementSection() {
       <div
         ref={topStepRef}
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-[calc(100%-2px)] left-0 z-[50] h-[28svh] min-h-[28svh] w-full bg-[#1677FF] will-change-transform md:h-[30dvh] md:min-h-[30dvh]"
+        className="pointer-events-none absolute bottom-[calc(100%-2px)] left-0 z-[50] h-[10svh] min-h-[10svh] w-full bg-[#1677FF] will-change-transform md:h-[30dvh] md:min-h-[30dvh]"
         style={{
           clipPath: TOP_STEP_OPEN,
           WebkitClipPath: TOP_STEP_OPEN,
@@ -326,7 +326,7 @@ export default function StatementSection() {
       <div
         ref={bottomStepRef}
         aria-hidden="true"
-        className="pointer-events-none absolute left-0 top-[calc(100%-2px)] z-[50] h-[28svh] min-h-[28svh] w-full bg-[#1677FF] will-change-transform md:h-[30dvh] md:min-h-[30dvh]"
+        className="pointer-events-none absolute left-0 top-[calc(100%-2px)] z-[50] h-[10svh] min-h-[10svh] w-full bg-[#1677FF] will-change-transform md:h-[30dvh] md:min-h-[30dvh]"
         style={{
           clipPath: BOTTOM_STEP_OPEN,
           WebkitClipPath: BOTTOM_STEP_OPEN,
@@ -335,7 +335,7 @@ export default function StatementSection() {
 
       <div
         ref={stageRef}
-        className="statement-stage relative z-10 flex h-[100svh] min-h-[100svh] w-full items-center justify-center overflow-hidden bg-[#1677FF] px-3 py-[clamp(1.5rem,4svh,3rem)] select-none motion-reduce:h-auto motion-reduce:min-h-0 motion-reduce:overflow-visible motion-reduce:py-16 lg:h-[100dvh] lg:min-h-[100dvh]"
+        className="statement-stage relative z-10 flex h-auto min-h-0 md:h-[100svh] md:min-h-[100svh] w-full items-center justify-center overflow-hidden bg-[#1677FF] px-3 py-4 md:py-[clamp(1.5rem,4svh,3rem)] select-none lg:h-[100dvh] lg:min-h-[100dvh]"
       >
         <h2 ref={headingRef} aria-label="We make brands go wow" className={`relative z-10 ${headingClass}`}>{renderWords()}</h2>
 
