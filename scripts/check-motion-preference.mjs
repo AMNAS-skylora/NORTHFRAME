@@ -18,7 +18,7 @@ try {
     });
     const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
     await page.goto(origin,{waitUntil:'domcontentloaded'});
-    let beforeIntroFinished=false,moved=false;
+    let sawIntro=false,moved=false;
     for(let i=0;i<80;i++) {
       const state=await page.evaluate(()=>{
         const text=document.querySelector('.service-item-text');
@@ -30,11 +30,15 @@ try {
           foreground: Number(getComputedStyle(document.querySelector('.foreground')).zIndex),introZ:intro?Number(getComputedStyle(intro).zIndex):0};
       });
       if(Math.abs(state.y)>1)moved=true;
-      if(state.intro&&state.visible&&Math.abs(state.y)<10&&state.foreground>state.introZ)beforeIntroFinished=true;
+      if(state.intro) {
+        sawIntro=true;
+        assert.equal(state.visible,false,'Hero text appeared before intro completed');
+        assert.ok(state.introZ>state.foreground,'Intro does not cover foreground');
+      }
       await page.waitForTimeout(75);
     }
     assert.ok(moved,'Hero text did not animate');
-    assert.ok(beforeIntroFinished,'Hero text was hidden until brand intro finished');
+    assert.ok(sawIntro,'Brand intro did not run');
     assert.equal(await page.getByTestId('motion-preference-toggle').count(),0);
     assert.equal(await page.locator('html').getAttribute('data-motion'),'full');
     await page.reload();
@@ -44,7 +48,7 @@ try {
     // covers DOM motion; desktop 3D still requires a GPU-capable browser.
     const relevantErrors=errors.filter(message=>scenario.width<1000 || message!=='Error creating WebGL context.');
     assert.deepEqual(relevantErrors,[]);
-    console.log('PASS always-full animations, early hero text, no option, reload',scenario);
+    console.log('PASS always-full animations, hero after intro, no option, reload',scenario);
     await browser.close();
   }
 }finally{await browser?.close();server.kill('SIGTERM');}

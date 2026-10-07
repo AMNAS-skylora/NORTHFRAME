@@ -38,7 +38,19 @@ export default function Hero({ introCompleted }: HeroProps) {
         .map((item) => item.querySelector<HTMLElement>(".service-item-text"))
         .filter((item): item is HTMLElement => Boolean(item));
 
-      // Start the hero immediately; the brand intro runs behind its text.
+      // Keep the page dark until the brand intro has handed control to hero.
+      if (!introCompleted) {
+        if (bgVisual) gsap.set(bgVisual, { opacity: 0 });
+        if (heroVisual) gsap.set(heroVisual, { opacity: 0 });
+        if (logoWrapperRef.current) gsap.set(logoWrapperRef.current, { opacity: 0, y: 18 });
+        if (labelRef.current) gsap.set(labelRef.current, { opacity: 0, y: 12 });
+        if (blueLineRef.current) gsap.set(blueLineRef.current, { scaleY: 0, transformOrigin: "center bottom" });
+        gsap.set(serviceItems, { opacity: 0, y: 8 });
+        gsap.set(serviceTextItems, { yPercent: 110 });
+        if (headerBtn) gsap.set(headerBtn, { opacity: 0, y: -10 });
+        return;
+      }
+
       const mm = gsap.matchMedia();
 
       mm.add(
@@ -166,7 +178,7 @@ export default function Hero({ introCompleted }: HeroProps) {
                 ease: "power3.out",
                 force3D: true,
               },
-              0
+              "-=0.58"
             );
           }
 
@@ -207,7 +219,7 @@ export default function Hero({ introCompleted }: HeroProps) {
                 ease: "power2.out",
                 force3D: true,
               },
-              0
+              "-=0.12"
             );
           }
 
@@ -221,7 +233,7 @@ export default function Hero({ introCompleted }: HeroProps) {
                 ease: "power3.out",
                 force3D: true,
               },
-              0.02
+              "<0.02"
             );
           }
 
@@ -256,7 +268,7 @@ export default function Hero({ introCompleted }: HeroProps) {
     },
     {
       scope: containerRef,
-      dependencies: [],
+      dependencies: [introCompleted],
       revertOnUpdate: true,
     }
   );

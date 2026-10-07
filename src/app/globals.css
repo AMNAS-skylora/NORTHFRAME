@@ -657,3 +657,12 @@ video {
     height: max(100%, var(--nf-visual-vh, 100svh));
   }
 }
+
+/* Keep the first paint dark; reveal static content if scripts cannot start. */
+.hero-mobile-waiting .heroBottom {
+  opacity: 0;
+  animation: nf-hero-content-fallback 0s 4s forwards;
+}
+@keyframes nf-hero-content-fallback {
+  to { opacity: 1; }
+}

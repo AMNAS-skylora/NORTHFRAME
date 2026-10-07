@@ -48,24 +48,32 @@ try {
         'Server overlay blocks the page without hydration');
       assert.equal(await page.locator('.hero-logo-wrapper').evaluate(e => getComputedStyle(e).opacity), '1');
       assert.equal(await page.locator('.service-item').first().evaluate(e => getComputedStyle(e).opacity), '1');
+      if (failure === 'blocked-chunks') {
+        assert.equal(await page.locator('.heroBottom').evaluate(e => getComputedStyle(e).opacity), '0', 'Initial screen is not dark');
+        await page.waitForTimeout(2500);
+      }
+      assert.equal(await page.locator('.heroBottom').evaluate(e => getComputedStyle(e).opacity), '1', 'Static hero fallback did not reveal');
       await page.evaluate(() => window.scrollTo(0, 600));
       assert.ok(await page.evaluate(() => scrollY > 0), 'Page cannot scroll without JS');
     } else {
       let sawTextMovement = false;
-      for (let i = 0; i < 70; i++) {
+      let sawIntroMark = false;
+      for (let i = 0; i < 100; i++) {
         const text = await page.locator('.service-item-text').first().evaluate(e => {
           const style = getComputedStyle(e);
           return { y: new DOMMatrixReadOnly(style.transform).m42,
-            opacity: Number(getComputedStyle(e.parentElement).opacity) };
+            opacity: Number(getComputedStyle(e.parentElement).opacity),
+            markOpacity: document.querySelector('.brand-intro-mark') ? Number(getComputedStyle(document.querySelector('.brand-intro-mark')).opacity) : 0 };
         });
         sawTextMovement ||= text.y > 0.1 && text.opacity > 0;
+        sawIntroMark ||= text.markOpacity > 0;
         if (sawTextMovement && Math.abs(text.y) < 0.1 && text.opacity === 1) break;
         await page.waitForTimeout(90);
       }
       assert.ok(sawTextMovement, 'Hero text never animated between its hidden and visible states');
       await page.waitForTimeout(Math.max(0, 1800 - (Date.now() - loadedAt)));
       if (failure === 'stalled-decode') {
-        assert.ok(Number(await page.locator('.brand-intro-mark').evaluate(e => getComputedStyle(e).opacity)) > 0,
+        assert.ok(sawIntroMark,
           'Intro never starts when decode stalls');
       }
       await page.locator('.brand-intro-root').waitFor({ state: 'detached', timeout: 5000 });

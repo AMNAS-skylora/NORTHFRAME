@@ -1,6 +1,6 @@
 # Mobile motion verification
 
-Use Node 24 LTS. Full animations always run, including when the browser requests reduced motion. There is no motion option, prompt or saved preference. The 3D hero remains desktop-only. Hero text starts immediately and sits above the brand intro animation, before the scroll-based Introduction section.
+Use Node 24 LTS. Full animations always run, including when the browser requests reduced motion. There is no motion option, prompt or saved preference. The 3D hero remains desktop-only. The brand intro covers a dark background first; hero text starts only after the intro finishes.
 
 ## Repeatable browser checks
 
@@ -21,7 +21,7 @@ These are WebKit engine tests, not physical iOS Safari certification. The callba
 
 1. Open the latest main deployment. Confirm that this is the new NORTHFRAME project, not an older `n-*` deployment.
 2. Record model, OS/browser version and whether Reduce Motion is on. Test with Reduce Motion both on and off; full animations should run in either case.
-3. On a cold load, watch hero text animate while the logo intro is still running; then confirm it releases page scrolling. Scroll through Introduction, What We Do, Expertise, Work, Vision, USPs, Founder and Contact. Text must not remain invisible when in view.
+3. On a cold load, watch the logo intro finish and release page scrolling, then watch hero text animate. Scroll through Introduction, What We Do, Expertise, Work, Vision, USPs, Founder and Contact. Text must not remain invisible when in view.
 4. Repeat with quick down/up swipes, portrait/landscape rotation, browser toolbar expansion, switching apps and returning, and service-page navigation followed by Back.
 5. Repeat on Android Chrome. On desktop, compare the existing stepped service transitions and text reveals; their desktop trigger paths/timings are preserved by this change.
 
@@ -69,10 +69,10 @@ Run `npm run test:service-steps` after installing Playwright Chromium and buildi
 
 On an actual phone, scroll slowly between every service with Reduce Motion both ON and OFF. The incoming image/text must share a staircase edge, not dissolve. Repeat upward, rotate and repeat. With Reduce Motion on, expect the same animated stepped panel transitions. Desktop polygons, pinning and timing are unchanged. Physical-device compositing still needs verification.
 
-## Always-full animations and early hero text
+## Always-full animations and intro-first sequencing
 
 Run `npm run test:motion-preference` after `npm run build` (install Chromium using `npx playwright install chromium` if needed).
 
-The test covers 375/390px touch browsers requesting reduced motion, blocked localStorage, and a 1440px desktop. Hero text must move while the brand intro is still visible, with the foreground above the intro layer. No animation preference button should exist. Full animation mode must remain enabled after reload, regardless of the browser’s Reduce Motion setting.
+The test covers 375/390px touch browsers requesting reduced motion, blocked localStorage, and a 1440px desktop. Hero text must stay hidden while the brand intro is visible, then animate after it finishes. No animation preference button should exist. Full animation mode must remain enabled after reload, regardless of the browser’s Reduce Motion setting.
 
-On physical iPhone Safari and Android Chrome, confirm the same early hero text, forward/reverse service wipes, and subsequent section reveals. No saved setting or phone-setting change is required. Automated browser emulation is not physical phone certification.
+On physical iPhone Safari and Android Chrome, confirm the same intro-first hero text, forward/reverse service wipes, and subsequent section reveals. No saved setting or phone-setting change is required. Automated browser emulation is not physical phone certification.

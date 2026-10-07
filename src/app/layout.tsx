@@ -56,6 +56,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-[#05070B] text-white">
+        <noscript><style>{`.hero-mobile-waiting .heroBottom { opacity: 1; animation: none; }`}</style></noscript>
         <PageTransitionProvider>
           <MotionRuntime />
           <CursorTrail />
