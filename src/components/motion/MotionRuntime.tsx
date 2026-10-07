@@ -18,6 +18,7 @@ export default function MotionRuntime() {
 
   useEffect(() => {
     let refreshFrame = 0;
+    let visualFrame = 0;
     let settleFrame = 0;
     let orientationTimer = 0;
     let delayedRefreshTimer = 0;
@@ -26,6 +27,24 @@ export default function MotionRuntime() {
     let mutationStopTimer = 0;
     let active = true;
     let lastWidth = window.innerWidth;
+
+    // Only the service artwork follows browser chrome. Its sticky layout and
+    // ScrollTrigger distance remain measured against the stable viewport.
+    const syncVisualViewport = () => {
+      const root = document.documentElement;
+      if (window.innerWidth >= 1024) {
+        root.style.removeProperty("--nf-visual-vh");
+        return;
+      }
+      const height = `${Math.round(window.visualViewport?.height || window.innerHeight)}px`;
+      if (root.style.getPropertyValue("--nf-visual-vh") !== height) {
+        root.style.setProperty("--nf-visual-vh", height);
+      }
+    };
+    const queueVisualViewport = () => {
+      cancelAnimationFrame(visualFrame);
+      visualFrame = requestAnimationFrame(syncVisualViewport);
+    };
 
     const syncStableViewport = () => {
       const root = document.documentElement;
@@ -41,6 +60,7 @@ export default function MotionRuntime() {
       root.style.setProperty("--nf-mobile-vh", `${Math.round(height)}px`);
     };
 
+    syncVisualViewport();
     syncStableViewport();
 
     const refresh = () => {
@@ -69,6 +89,7 @@ export default function MotionRuntime() {
     };
 
     const handleViewportResize = () => {
+      queueVisualViewport();
       const nextWidth = window.innerWidth;
       if (nextWidth === lastWidth) return;
       lastWidth = nextWidth;
@@ -159,6 +180,7 @@ export default function MotionRuntime() {
     return () => {
       active = false;
       cancelAnimationFrame(refreshFrame);
+      cancelAnimationFrame(visualFrame);
       cancelAnimationFrame(settleFrame);
       window.clearTimeout(orientationTimer);
       window.clearTimeout(delayedRefreshTimer);

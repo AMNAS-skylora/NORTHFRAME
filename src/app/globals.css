@@ -647,3 +647,13 @@ video {
     backface-visibility: visible;
   }
 }
+
+/* Fill toolbar-expanded mobile screens without resizing scroll-story geometry. */
+@media (max-width: 1023px) {
+  .wat-we-doen-sticky {
+    overflow: visible;
+  }
+  .wat-we-doen-stage {
+    height: max(100%, var(--nf-visual-vh, 100svh));
+  }
+}
