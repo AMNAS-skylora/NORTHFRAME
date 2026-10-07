@@ -20,21 +20,21 @@ export function expandProjectImage(source: HTMLImageElement | null, slug: string
   document.body.append(overlay);
   const width = window.innerWidth;
   const height = window.innerHeight;
-  const expansion = overlay.animate([
-    { clipPath: `inset(${Math.max(0, bounds.top)}px ${Math.max(0, width - bounds.right)}px ${Math.max(0, height - bounds.bottom)}px ${Math.max(0, bounds.left)}px)` },
-    { clipPath: "inset(0px 0px 0px 0px)" },
-  ], { duration: 650, easing: "cubic-bezier(0.22,1,0.36,1)", fill: "forwards" });
+  // A short inward beat on black, then open the same image into the cover.
+  const shrink = 0.9;
+  const smallWidth = bounds.width * shrink;
+  const smallHeight = bounds.height * shrink;
   const imageExpansion = image.animate([
-    { width: `${bounds.width}px`, height: `${bounds.height}px`, transform: `translate(${bounds.left}px,${bounds.top}px)` },
-    { width: `${width}px`, height: `${height}px`, transform: "translate(0px,0px)" },
-  ], { duration: 650, easing: "cubic-bezier(0.22,1,0.36,1)", fill: "forwards" });
+    { offset: 0, width: `${bounds.width}px`, height: `${bounds.height}px`, transform: `translate(${bounds.left}px,${bounds.top}px)` },
+    { offset: 0.24, width: `${smallWidth}px`, height: `${smallHeight}px`, transform: `translate(${bounds.left + (bounds.width - smallWidth) / 2}px,${bounds.top + (bounds.height - smallHeight) / 2}px)` },
+    { offset: 1, width: `${width}px`, height: `${height}px`, transform: "translate(0px,0px)" },
+  ], { duration: 950, easing: "cubic-bezier(0.4,0,0.2,1)", fill: "forwards" });
   let frame = 0;
   let finished = false;
   const cleanup = () => {
     finished = true;
     cancelAnimationFrame(frame);
     clearTimeout(deadline);
-    expansion.cancel();
     imageExpansion.cancel();
     overlay.remove();
     window.removeEventListener("popstate", cleanup);
@@ -46,7 +46,7 @@ export function expandProjectImage(source: HTMLImageElement | null, slug: string
   const settle = () => {
     if (finished) return;
     const cover = document.querySelector<HTMLImageElement>(`[data-project-cover="${CSS.escape(slug)}"] img`);
-    if (cover?.complete && cover.naturalWidth && expansion.playState === "finished") {
+    if (cover?.complete && cover.naturalWidth && imageExpansion.playState === "finished") {
       const fade = overlay.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, fill: "forwards" });
       fade.onfinish = cleanup;
     } else frame = requestAnimationFrame(settle);

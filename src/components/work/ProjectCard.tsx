@@ -20,12 +20,14 @@ interface ProjectCardProps {
   project: WorkProject;
   gridClass?: string;
   isEvenMobile?: boolean;
+  dark?: boolean;
 }
 
 export function ProjectCard({
   project,
   gridClass = "col-span-full lg:col-span-4 lg:col-start-8 lg:w-full",
   isEvenMobile = false,
+  dark = false,
 }: ProjectCardProps) {
   const cardRef = useRef<HTMLElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -193,7 +195,7 @@ export function ProjectCard({
 
           {/* PROJECT METADATA DIRECTLY ATTACHED BELOW IMAGE */}
           <div ref={metaRef} className="mt-2 flex flex-col items-start gap-[4px]">
-            <h3 className="text-[clamp(18px,1.5vw,22px)] font-normal leading-none tracking-[-0.02em] text-black">
+            <h3 className={`text-[clamp(18px,1.5vw,22px)] font-normal leading-none tracking-[-0.02em] ${dark ? "text-white" : "text-black"}`}>
               {project.title}
             </h3>
 

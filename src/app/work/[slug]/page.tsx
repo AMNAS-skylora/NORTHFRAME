@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { ProjectCard } from "@/components/work/ProjectCard";
 import Header from "@/components/navigation/Header";
 import { TransitionLink } from "@/components/navigation/PageTransitionProvider";
 import { getWorkDetail, workDetails } from "@/data/work";
@@ -40,6 +41,7 @@ export default async function WorkDetailPage({
   const project = getWorkDetail(slug);
 
   if (!project) notFound();
+  const nextProject = workDetails[(workDetails.findIndex((item) => item.slug === slug) + 1) % workDetails.length];
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#05070B] text-white selection:bg-[#1677FF] selection:text-white">
@@ -93,6 +95,15 @@ export default async function WorkDetailPage({
           </TransitionLink>
         </div>
       </div>
+      <section aria-label="Next case" className="mx-auto grid w-full max-w-[1500px] gap-8 border-t border-white/10 px-6 py-20 sm:px-10 lg:grid-cols-12 lg:px-16">
+        <h2 className="text-4xl font-bold uppercase lg:col-span-5">Next case →</h2>
+        <ProjectCard
+          key={nextProject.slug}
+          dark
+          project={{ ...nextProject, id: 1, alt: nextProject.imageAlt, desktopColumn: "lg:col-start-8" }}
+          gridClass="lg:col-span-4 lg:col-start-8"
+        />
+      </section>
     </main>
   );
 }
