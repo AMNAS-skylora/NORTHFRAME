@@ -56,7 +56,7 @@ export default function ServiceList({
                   }
                 }}
                 href={service.href}
-                className="service-item cursor-pointer overflow-hidden opacity-0"
+                className="service-item cursor-pointer overflow-hidden"
               >
                 <span className="service-item-text block will-change-transform">
                   {service.name}

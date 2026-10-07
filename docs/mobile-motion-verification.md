@@ -1,6 +1,6 @@
 # Mobile motion verification
 
-Use Node 22. The home page respects the phone's `prefers-reduced-motion` setting. With Reduce Motion enabled, several entrances are intentionally static; service panels use opacity transitions. The 3D hero is intentionally desktop-only. Neither of these is a failed mobile reveal.
+Use Node 24 LTS. The home page respects the phone's `prefers-reduced-motion` setting. With Reduce Motion enabled, several entrances are intentionally static; service panels use opacity transitions. The 3D hero is intentionally desktop-only. Neither of these is a failed mobile reveal.
 
 ## Repeatable browser checks
 

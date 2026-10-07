@@ -13,12 +13,20 @@ try {
     if (i === 59) throw new Error('Run npm run build before testing.');
     await new Promise(resolve => setTimeout(resolve, 250));
   }
-  for (const failure of ['disabled-js', 'blocked-chunks', 'stalled-decode', 'normal']) {
+  for (const scenario of [
+    { failure: 'disabled-js', width: 390 },
+    { failure: 'blocked-chunks', width: 390 },
+    { failure: 'stalled-decode', width: 390 },
+    { failure: 'normal', width: 375 },
+    { failure: 'normal', width: 390 },
+    { failure: 'normal', width: 430 },
+  ]) {
+    const { failure, width } = scenario;
     browser = await chromium.launch({ headless: true,
       ...(process.env.CHROMIUM_EXECUTABLE_PATH ? { executablePath: process.env.CHROMIUM_EXECUTABLE_PATH } : {}),
     });
     const context = await browser.newContext({
-      viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true,
+      viewport: { width, height: 844 }, isMobile: true, hasTouch: true,
       javaScriptEnabled: failure !== 'disabled-js', reducedMotion: 'no-preference',
     });
     if (failure === 'blocked-chunks') {
@@ -38,6 +46,7 @@ try {
       assert.equal(await page.locator('.brand-intro-root').isVisible(), false,
         'Server overlay blocks the page without hydration');
       assert.equal(await page.locator('.hero-logo-wrapper').evaluate(e => getComputedStyle(e).opacity), '1');
+      assert.equal(await page.locator('.service-item').first().evaluate(e => getComputedStyle(e).opacity), '1');
       await page.evaluate(() => window.scrollTo(0, 600));
       assert.ok(await page.evaluate(() => scrollY > 0), 'Page cannot scroll without JS');
     } else {
@@ -45,13 +54,34 @@ try {
         assert.ok(Number(await page.locator('.brand-intro-mark').evaluate(e => getComputedStyle(e).opacity)) > 0,
           'Intro never starts when decode stalls');
       }
-      await page.waitForTimeout(3000);
+      let sawTextMovement = false;
+      for (let i = 0; i < 70; i++) {
+        const text = await page.locator('.service-item-text').first().evaluate(e => {
+          const style = getComputedStyle(e);
+          return { y: new DOMMatrixReadOnly(style.transform).m42,
+            opacity: Number(getComputedStyle(e.parentElement).opacity) };
+        });
+        sawTextMovement ||= text.y > 0.1 && text.opacity > 0;
+        if (sawTextMovement && Math.abs(text.y) < 0.1 && text.opacity === 1) break;
+        await page.waitForTimeout(90);
+      }
+      assert.ok(sawTextMovement, 'Hero text never animated between its hidden and visible states');
+      await page.waitForTimeout(600);
       assert.equal(await page.locator('.brand-intro-root').count(), 0);
       assert.notEqual(await page.evaluate(() => document.body.style.overflow), 'hidden');
       assert.equal(await page.locator('.hero-logo-wrapper').evaluate(e => getComputedStyle(e).opacity), '1');
+      const services = await page.locator('.service-item').evaluateAll(items => items.map(e => ({
+        opacity: getComputedStyle(e).opacity,
+        y: new DOMMatrixReadOnly(getComputedStyle(e.querySelector('.service-item-text')).transform).m42,
+      })));
+      assert.equal(services.length, 5);
+      for (const item of services) {
+        assert.equal(item.opacity, '1', 'Hero service is still hidden');
+        assert.ok(Math.abs(item.y) < 0.1, 'Hero text remains translated outside its clip');
+      }
       assert.deepEqual(errors, []);
     }
-    console.log('PASS intro', failure);
+    console.log('PASS intro + hero', scenario);
     await context.close();
     await browser.close();
   }
