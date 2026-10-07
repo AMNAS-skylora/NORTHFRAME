@@ -15,9 +15,10 @@ if (typeof window !== "undefined") {
 
 export interface HeroProps {
   introCompleted: boolean;
+  skipEntrance?: boolean;
 }
 
-export default function Hero({ introCompleted }: HeroProps) {
+export default function Hero({ introCompleted, skipEntrance = false }: HeroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const handoffRef = useRef<HTMLDivElement>(null);
   const logoWrapperRef = useRef<HTMLDivElement>(null);
@@ -66,7 +67,7 @@ export default function Hero({ introCompleted }: HeroProps) {
             reducedMotion: boolean;
           };
 
-          if (reducedMotion) {
+          if (reducedMotion || skipEntrance) {
             if (bgVisual) gsap.set(bgVisual, { opacity: 1 });
             if (heroVisual) gsap.set(heroVisual, { opacity: 1 });
             if (logoWrapperRef.current) {
@@ -268,7 +269,7 @@ export default function Hero({ introCompleted }: HeroProps) {
     },
     {
       scope: containerRef,
-      dependencies: [introCompleted],
+      dependencies: [introCompleted, skipEntrance],
       revertOnUpdate: true,
     }
   );
@@ -346,7 +347,7 @@ export default function Hero({ introCompleted }: HeroProps) {
     },
     {
       scope: containerRef,
-      dependencies: [introCompleted],
+      dependencies: [introCompleted, skipEntrance],
       revertOnUpdate: true,
     }
   );

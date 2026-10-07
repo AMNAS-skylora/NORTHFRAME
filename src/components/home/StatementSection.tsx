@@ -287,8 +287,8 @@ export default function StatementSection() {
         ref={index === 4 ? wowRef : undefined}
         className={`${index === 4 ? "relative left-1/2 block w-max -translate-x-1/2" : "relative inline-block"} whitespace-nowrap px-[0.06em] ${
           index === 4
-            ? "text-[52px] md:text-[clamp(68px,min(16vw,20svh),220px)]"
-            : "text-[52px] md:text-[clamp(60px,min(14vw,18svh),205px)]"
+            ? "text-[62px] md:text-[clamp(68px,min(16vw,20svh),220px)]"
+            : "text-[62px] md:text-[clamp(60px,min(14vw,18svh),205px)]"
         } text-black`}
       >
         <span>{index === 4 ? renderWowLetters(false) : word}</span>

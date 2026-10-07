@@ -57,14 +57,6 @@ export default async function WorkDetailPage({
           className="object-cover"
         />
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/25" />
-        <nav aria-label="Project navigation" className="absolute right-[max(1.1rem,env(safe-area-inset-right))] top-20 z-30 flex w-[156px] flex-col gap-2 sm:right-8 sm:top-24">
-          <TransitionLink href="/work" aria-label="Back to Work" className="flex min-h-11 w-full items-center justify-center gap-2.5 bg-white px-3 py-3 font-mono text-[11px] uppercase leading-none tracking-[0.04em] text-black transition-colors hover:bg-[#1677FF] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1677FF]">
-            <span aria-hidden="true" className="inline-flex w-4 shrink-0 justify-center text-base leading-none">←</span><span>Back to Work</span>
-          </TransitionLink>
-          <TransitionLink href={`/work/${nextProject.slug}`} className="flex min-h-11 w-full items-center justify-center gap-2.5 bg-white px-3 py-3 font-mono text-[11px] uppercase leading-none tracking-[0.04em] text-black transition-colors hover:bg-[#1677FF] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1677FF]">
-            <span>Next case</span><span aria-hidden="true" className="inline-flex w-4 shrink-0 justify-center text-base leading-none">→</span>
-          </TransitionLink>
-        </nav>
         <header className="absolute inset-x-0 bottom-0 z-10 px-[max(1.1rem,env(safe-area-inset-left))] pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-10 sm:pb-12 lg:px-16 lg:pb-16">
           <span className="inline-block bg-[#1677FF] px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white sm:text-xs">
             {project.category}

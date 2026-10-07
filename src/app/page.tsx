@@ -24,6 +24,7 @@ const Shared3DBackground = dynamic(
 
 export default function Home() {
   const [introCompleted, setIntroCompleted] = useState(false);
+  const [skipHeroEntrance, setSkipHeroEntrance] = useState(false);
   const [desktop3DEnabled, setDesktop3DEnabled] = useState(false);
 
   useEffect(() => {
@@ -48,7 +49,8 @@ export default function Home() {
     };
   }, []);
 
-  const handleIntroComplete = () => {
+  const handleIntroComplete = (skipped: boolean) => {
+    setSkipHeroEntrance(skipped);
     setIntroCompleted(true);
   };
 
@@ -68,7 +70,7 @@ export default function Home() {
 
       <div className="foreground relative z-10 w-full flex flex-col pointer-events-none">
         <div className="shared-background-range relative w-full">
-          <Hero introCompleted={introCompleted} />
+          <Hero introCompleted={introCompleted} skipEntrance={skipHeroEntrance} />
 
           <section
             id="intro"

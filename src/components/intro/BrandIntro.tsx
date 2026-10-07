@@ -11,7 +11,7 @@ if (typeof window !== "undefined") {
 }
 
 interface BrandIntroProps {
-  onComplete?: () => void;
+  onComplete?: (skipped: boolean) => void;
 }
 
 interface SavedScrollStyles {
@@ -53,7 +53,7 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
     savedScrollStylesRef.current = null;
   }, []);
 
-  const finishIntro = useCallback(() => {
+  const finishIntro = useCallback((skipped = false) => {
     if (finishedRef.current) return;
     finishedRef.current = true;
     introSeen = true;
@@ -62,7 +62,7 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
     timelineRef.current = null;
     restoreScroll();
     setIsVisible(false);
-    onComplete?.();
+    onComplete?.(skipped);
     window.dispatchEvent(new Event("northframe:motion-refresh"));
 
     requestAnimationFrame(() => {
@@ -75,7 +75,7 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
     let alreadySeen = introSeen;
     try { alreadySeen ||= sessionStorage.getItem(INTRO_SEEN_KEY) === "1"; } catch {}
     if (alreadySeen) {
-      finishIntro();
+      finishIntro(true);
       return;
     }
 
