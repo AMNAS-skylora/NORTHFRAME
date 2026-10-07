@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { revealOnce } from "@/components/motion/revealOnce";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -78,27 +79,10 @@ export default function OurVision() {
           };
         }
 
-        const target = containerRef.current;
-        const observer =
-          target && "IntersectionObserver" in window
-            ? new IntersectionObserver(
-                ([entry]) => {
-                  if (!entry?.isIntersecting) return;
-                  timeline.play(0);
-                  observer?.disconnect();
-                },
-                {
-                  threshold: 0.01,
-                  rootMargin: "0px 0px -6% 0px",
-                }
-              )
-            : null;
-
-        if (observer && target) observer.observe(target);
-        else timeline.play(0);
+        const stopReveal = revealOnce(containerRef.current!, () => timeline.play(0), 0.94);
 
         return () => {
-          observer?.disconnect();
+          stopReveal();
           timeline.kill();
         };
       };

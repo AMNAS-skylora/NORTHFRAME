@@ -1,5 +1,7 @@
 "use client";
 
+import { revealOnce } from "@/components/motion/revealOnce";
+
 import {
   FormEvent,
   useEffect,
@@ -115,7 +117,7 @@ export default function ContactSection() {
         ].filter((item): item is HTMLDivElement => Boolean(item));
 
         const tweens: gsap.core.Tween[] = [];
-        const observers: IntersectionObserver[] = [];
+        const stopReveals: (() => void)[] = [];
 
         targets.forEach((target) => {
           gsap.set(target, {
@@ -147,27 +149,11 @@ export default function ContactSection() {
 
           if (!mobile) return;
 
-          if ("IntersectionObserver" in window) {
-            const observer = new IntersectionObserver(
-              ([entry]) => {
-                if (!entry?.isIntersecting) return;
-                tween.play(0);
-                observer.disconnect();
-              },
-              {
-                threshold: 0.01,
-                rootMargin: "0px 0px -5% 0px",
-              }
-            );
-            observer.observe(target);
-            observers.push(observer);
-          } else {
-            tween.play(0);
-          }
+          stopReveals.push(revealOnce(target, () => tween.play(0), 0.95));
         });
 
         return () => {
-          observers.forEach((observer) => observer.disconnect());
+          stopReveals.forEach((stop) => stop());
           tweens.forEach((tween) => {
             tween.scrollTrigger?.kill();
             tween.kill();

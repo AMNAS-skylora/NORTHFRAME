@@ -74,7 +74,7 @@ export default function Hero({ introCompleted }: HeroProps) {
           reducedMotion: "(prefers-reduced-motion: reduce)",
         },
         (context) => {
-          const { mobile, reducedMotion } = context.conditions as {
+          const { reducedMotion } = context.conditions as {
             mobile: boolean;
             desktop: boolean;
             reducedMotion: boolean;
@@ -155,7 +155,9 @@ export default function Hero({ introCompleted }: HeroProps) {
           }
 
           const tl = gsap.timeline({
-            paused: mobile,
+            // The delay already lets the initial hidden state paint. Keep the
+            // entrance independent of viewport refresh and scroll callbacks.
+            paused: false,
             delay: 0.16,
             defaults: { overwrite: "auto" },
           });
@@ -272,28 +274,7 @@ export default function Hero({ introCompleted }: HeroProps) {
             });
           });
 
-          if (!mobile) {
-            return () => tl.kill();
-          }
-
-          // iOS Safari can finish the intro overlay and paint the hero in the
-          // same frame. Starting after two RAFs guarantees the hidden start
-          // state has actually been painted before the reveal timeline runs.
-          let firstFrame = 0;
-          let secondFrame = 0;
-
-          firstFrame = window.requestAnimationFrame(() => {
-            secondFrame = window.requestAnimationFrame(() => {
-              ScrollTrigger.refresh();
-              tl.play(0);
-            });
-          });
-
-          return () => {
-            window.cancelAnimationFrame(firstFrame);
-            window.cancelAnimationFrame(secondFrame);
-            tl.kill();
-          };
+          return () => tl.kill();
         }
       );
 

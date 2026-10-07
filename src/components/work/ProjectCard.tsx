@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { revealOnce } from "@/components/motion/revealOnce";
 import Image from "next/image";
 import { TransitionLink } from "@/components/navigation/PageTransitionProvider";
 import { useGSAP } from "@gsap/react";
@@ -100,26 +101,11 @@ export function ProjectCard({
           "(max-width: 768px), (max-width: 1023px) and (hover: none) and (pointer: coarse)"
         ).matches;
 
-        let observer: IntersectionObserver | null = null;
+        let stopReveal = () => {};
         let trigger: ScrollTrigger | null = null;
 
         if (mobileLike) {
-          if ("IntersectionObserver" in window) {
-            observer = new IntersectionObserver(
-              ([entry]) => {
-                if (!entry?.isIntersecting) return;
-                timeline.play(0);
-                observer?.disconnect();
-              },
-              {
-                threshold: 0.01,
-                rootMargin: "0px 0px -8% 0px",
-              }
-            );
-            observer.observe(card);
-          } else {
-            timeline.play(0);
-          }
+          stopReveal = revealOnce(card, () => timeline.play(0), 0.92);
         } else {
           trigger = ScrollTrigger.create({
             trigger: card,
@@ -131,7 +117,7 @@ export function ProjectCard({
         }
 
         return () => {
-          observer?.disconnect();
+          stopReveal();
           trigger?.kill();
           timeline.kill();
         };

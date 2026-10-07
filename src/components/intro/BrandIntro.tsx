@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -63,14 +63,12 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
     });
   }, [onComplete, restoreScroll]);
 
-  useEffect(() => {
-    if (!isVisible || finishedRef.current) return;
-    const timeoutId = window.setTimeout(finishIntro, 4000);
-    return () => window.clearTimeout(timeoutId);
-  }, [finishIntro, isVisible]);
-
   useLayoutEffect(() => {
     if (!isVisible) return;
+
+    // Arm recovery before locking scroll or starting GSAP. Passive effects can
+    // be delayed; the server-rendered overlay must never depend on hydration.
+    const timeoutId = window.setTimeout(finishIntro, 4000);
 
     savedScrollStylesRef.current = {
       bodyOverflow: document.body.style.overflow,
@@ -109,7 +107,7 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
       (screenDiagonal / markSize) * 2.5
     );
 
-    gsap.set(container, { autoAlpha: 1 });
+    gsap.set(container, { autoAlpha: 1, pointerEvents: "auto" });
     gsap.set(mark, {
       autoAlpha: reducedMotion ? 1 : 0,
       scale: reducedMotion ? 1 : 0.74,
@@ -124,6 +122,7 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
 
     const startTimeline = () => {
       if (cancelled || finishedRef.current || timelineRef.current) return;
+      window.clearTimeout(assetFallbackTimer);
 
       const timeline = gsap.timeline({
         onComplete: finishIntro,
@@ -168,6 +167,10 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
 
     const image = imageRef.current;
 
+    // Bound the complete-image decode path too. A delayed decode promise must
+    // not hold the logo until the outer fail-safe skips the entire intro.
+    assetFallbackTimer = window.setTimeout(startTimeline, 1400);
+
     if (reducedMotion || !image) {
       startTimeline();
     } else if (image.complete && image.naturalWidth > 0) {
@@ -199,12 +202,11 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
         image.removeEventListener("error", handleError);
       };
 
-      // Never leave the screen blocked if an in-app browser delays image events.
-      assetFallbackTimer = window.setTimeout(startTimeline, 1400);
     }
 
     return () => {
       cancelled = true;
+      window.clearTimeout(timeoutId);
       window.clearTimeout(assetFallbackTimer);
       removeAssetListeners();
       timelineRef.current?.kill();
@@ -219,6 +221,7 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
     <div
       ref={containerRef}
       aria-hidden="true"
+      style={{ visibility: "hidden", opacity: 0, pointerEvents: "none" }}
       className="brand-intro-root fixed inset-0 z-[200] flex h-[100dvh] min-h-[100svh] w-full items-center justify-center overflow-hidden bg-[#070B14] select-none touch-none"
     >
       <div ref={markRef} className="brand-intro-mark relative z-10 h-[68px] w-[68px] opacity-0 will-change-transform sm:h-[92px] sm:w-[92px]">

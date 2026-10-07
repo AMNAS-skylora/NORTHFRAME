@@ -83,29 +83,17 @@ export default function WatWeDoen() {
           panelsRef.current.forEach((panel, index) => {
             if (!panel) return;
 
-            if (reduced) {
-              gsap.set(panel, {
-                inset: 0,
-                clipPath: "inset(0)",
-                WebkitClipPath: "inset(0)",
-                yPercent: 0,
-                autoAlpha: index === 0 ? 1 : 0,
-                zIndex: 10 + index,
-                force3D: true,
-                willChange: "opacity",
-              });
-            } else {
-              gsap.set(panel, {
-                inset: 0,
-                clipPath: index === 0 ? "inset(0)" : CLOSED_STEPS,
-                WebkitClipPath: index === 0 ? "inset(0)" : CLOSED_STEPS,
-                yPercent: 0,
-                autoAlpha: 1,
-                zIndex: 10 + index,
-                force3D: true,
-                willChange: "clip-path",
-              });
-            }
+            // Keep panel opacity fixed: services reveal through the same mask
+            // on every device. Reduced motion switches masks without a tween.
+            gsap.set(panel, {
+              inset: 0,
+              clipPath: index === 0 ? "inset(0)" : CLOSED_STEPS,
+              WebkitClipPath: index === 0 ? "inset(0)" : CLOSED_STEPS,
+              autoAlpha: 1,
+              zIndex: 10 + index,
+              ...(mobile ? { clearProps: "transform" } : { yPercent: 0, force3D: true }),
+              willChange: mobile || reduced ? "auto" : "clip-path",
+            });
 
             const image = imagesRef.current[index];
             if (image) {
@@ -189,14 +177,12 @@ export default function WatWeDoen() {
             const segmentStart = introSegment + (index - 1);
 
             if (reduced) {
-              // Respect Reduce Motion without falling back to the old stacked
-              // card layout: keep the pinned showcase and use a tiny crossfade.
-              timeline.to(
+              // Reduce Motion keeps a discrete panel switch, never a crossfade.
+              timeline.set(
                 panel,
                 {
-                  autoAlpha: 1,
-                  duration: 0.12,
-                  ease: "none",
+                  clipPath: OPEN_STEPS,
+                  WebkitClipPath: OPEN_STEPS,
                 },
                 segmentStart
               );
@@ -208,7 +194,6 @@ export default function WatWeDoen() {
                   WebkitClipPath: OPEN_STEPS,
                   duration: revealDuration,
                   ease: "none",
-                  force3D: true,
                 },
                 segmentStart
               );
@@ -231,10 +216,10 @@ export default function WatWeDoen() {
               {},
               {
                 duration: reduced
-                  ? 0.88
+                  ? 1
                   : Math.max(0.12, 1 - revealDuration),
               },
-              segmentStart + (reduced ? 0.12 : revealDuration)
+              segmentStart + (reduced ? 0 : revealDuration)
             );
           });
 
