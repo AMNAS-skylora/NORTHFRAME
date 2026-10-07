@@ -666,3 +666,11 @@ video {
 @keyframes nf-hero-content-fallback {
   to { opacity: 1; }
 }
+
+@supports (height: 100dvh) {
+  @media (max-width: 1023px) {
+    .wat-we-doen-stage {
+      height: max(100%, 100dvh, var(--nf-visual-vh, 100dvh));
+    }
+  }
+}
