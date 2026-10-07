@@ -2,6 +2,7 @@
 
 import { getReducedMotionQuery } from "@/components/motion/motionPreference";
 
+import { expandProjectImage } from "./expandProjectImage";
 import { useRef } from "react";
 import { revealOnce } from "@/components/motion/revealOnce";
 import Image from "next/image";
@@ -162,6 +163,11 @@ export function ProjectCard({
     >
       <TransitionLink
         href={`/work/${project.slug}`}
+        onClick={(event) => {
+          if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+            expandProjectImage(imageRef.current, project.slug);
+          }
+        }}
         className="group block w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1677FF] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
       >
         <div className="relative flex w-full flex-col items-start text-left cursor-pointer">

@@ -45,7 +45,7 @@ export default async function WorkDetailPage({
     <main className="relative min-h-screen overflow-x-hidden bg-[#05070B] text-white selection:bg-[#1677FF] selection:text-white">
       <Header />
 
-      <section aria-label={`${project.title} project cover`} className="relative h-[100svh] min-h-[100svh] w-full overflow-hidden bg-[#0A0C0E] supports-[height:100dvh]:h-[100dvh] supports-[height:100dvh]:min-h-[100dvh]">
+      <section data-project-cover={project.slug} aria-label={`${project.title} project cover`} className="relative h-[100svh] min-h-[100svh] w-full overflow-hidden bg-[#0A0C0E] supports-[height:100dvh]:h-[100dvh] supports-[height:100dvh]:min-h-[100dvh]">
         <Image
           src={project.image}
           alt={project.imageAlt}

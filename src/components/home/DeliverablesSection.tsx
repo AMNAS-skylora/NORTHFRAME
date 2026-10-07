@@ -153,9 +153,9 @@ export default function DeliverablesSection() {
         gsap.fromTo(
           element,
           {
-            opacity: 1,
-            yPercent: 100,
-            scale: 1.02,
+            opacity: compact ? 0 : 1,
+            yPercent: compact ? 0 : 100,
+            scale: compact ? 1 : 1.02,
             clipPath: "inset(0% 0% 0% 0%)",
           },
           {
@@ -163,7 +163,7 @@ export default function DeliverablesSection() {
             yPercent: 0,
             scale: 1,
             clipPath: "inset(0% 0% 0% 0%)",
-            duration: compact ? 0.66 : 0.82,
+            duration: compact ? 0.4 : 0.82,
             ease: "power3.inOut",
             overwrite: "auto",
             force3D: true,
@@ -176,9 +176,10 @@ export default function DeliverablesSection() {
       if (index === previousIndex) {
         gsap.to(element, {
           zIndex: 10,
-          yPercent: compact ? -34 : -46,
-          scale: compact ? 0.995 : 0.99,
-          duration: compact ? 0.58 : 0.74,
+          opacity: 1,
+          yPercent: compact ? 0 : -46,
+          scale: compact ? 1 : 0.99,
+          duration: compact ? 0.4 : 0.74,
           ease: "power3.inOut",
           overwrite: "auto",
           force3D: true,
@@ -213,7 +214,7 @@ export default function DeliverablesSection() {
         descEl,
         {
           autoAlpha: 0,
-          y: compact ? 4 : 6,
+          y: compact ? 0 : 6,
         },
         {
           autoAlpha: 1,
@@ -278,9 +279,9 @@ export default function DeliverablesSection() {
                 gsap.fromTo(
                   currentMedia,
                   {
-                    opacity: 1,
-                    yPercent: 100,
-                    scale: 1.02,
+                    opacity: compact ? 0 : 1,
+                    yPercent: compact ? 0 : 100,
+                    scale: compact ? 1 : 1.02,
                     clipPath: "inset(0% 0% 0% 0%)",
                   },
                   {
