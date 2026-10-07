@@ -24,11 +24,15 @@ export function expandProjectImage(source: HTMLImageElement | null, slug: string
   const shrink = Math.min(0.72, width * 0.65 / bounds.width, height * 0.55 / bounds.height);
   const smallWidth = bounds.width * shrink;
   const smallHeight = bounds.height * shrink;
+  const centered = { width: `${smallWidth}px`, height: `${smallHeight}px`, transform: `translate(${(width - smallWidth) / 2}px,${(height - smallHeight) / 2}px)` };
+  const fullCover = { width: `${width}px`, height: `${height}px`, transform: "translate(0px,0px)" };
   const imageExpansion = image.animate([
-    { offset: 0, width: `${bounds.width}px`, height: `${bounds.height}px`, transform: `translate(${bounds.left}px,${bounds.top}px)` },
-    { offset: 0.38, width: `${smallWidth}px`, height: `${smallHeight}px`, transform: `translate(${(width - smallWidth) / 2}px,${(height - smallHeight) / 2}px)` },
-    { offset: 1, width: `${width}px`, height: `${height}px`, transform: "translate(0px,0px)" },
-  ], { duration: 1100, easing: "cubic-bezier(0.4,0,0.2,1)", fill: "forwards" });
+    { offset: 0, width: `${bounds.width}px`, height: `${bounds.height}px`, transform: `translate(${bounds.left}px,${bounds.top}px)`, easing: "cubic-bezier(0.4,0,0.2,1)" },
+    { offset: 0.3, ...centered },
+    { offset: 0.42, ...centered, easing: "cubic-bezier(0.4,0,0.2,1)" },
+    { offset: 0.94, ...fullCover },
+    { offset: 1, ...fullCover },
+  ], { duration: 2000, easing: "linear", fill: "forwards" });
   let frame = 0;
   let finished = false;
   const cleanup = () => {

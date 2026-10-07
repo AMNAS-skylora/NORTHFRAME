@@ -57,14 +57,14 @@ export default async function WorkDetailPage({
           className="object-cover"
         />
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/25" />
-        <TransitionLink
-          href="/work"
-          aria-label="Back to Work"
-          className="absolute right-[max(1.1rem,env(safe-area-inset-right))] top-20 z-30 inline-flex min-h-11 items-center gap-2 bg-white px-3 font-mono text-xs uppercase tracking-wider text-black focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1677FF] sm:right-8 sm:top-24"
-        >
-          ← Back to Work
-        </TransitionLink>
-        <TransitionLink href={`/work/${nextProject.slug}`} className="absolute right-[max(1.1rem,env(safe-area-inset-right))] top-36 z-30 inline-flex min-h-11 items-center bg-white px-3 font-mono text-xs uppercase tracking-wider text-black sm:right-8 sm:top-40">Next case →</TransitionLink>
+        <nav aria-label="Project navigation" className="absolute right-[max(1.1rem,env(safe-area-inset-right))] top-20 z-30 flex w-40 flex-col gap-2 sm:right-8 sm:top-24">
+          <TransitionLink href="/work" aria-label="Back to Work" className="flex min-h-11 w-full items-center justify-between gap-3 bg-white px-4 py-3 font-mono text-[11px] uppercase leading-none tracking-wide text-black transition-colors hover:bg-[#1677FF] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1677FF]">
+            <span aria-hidden="true">←</span><span>Back to Work</span>
+          </TransitionLink>
+          <TransitionLink href={`/work/${nextProject.slug}`} className="flex min-h-11 w-full items-center justify-between gap-3 bg-white px-4 py-3 font-mono text-[11px] uppercase leading-none tracking-wide text-black transition-colors hover:bg-[#1677FF] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1677FF]">
+            <span>Next case</span><span aria-hidden="true">→</span>
+          </TransitionLink>
+        </nav>
         <header className="absolute inset-x-0 bottom-0 z-10 px-[max(1.1rem,env(safe-area-inset-left))] pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-10 sm:pb-12 lg:px-16 lg:pb-16">
           <span className="inline-block bg-[#1677FF] px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white sm:text-xs">
             {project.category}
