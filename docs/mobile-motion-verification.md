@@ -61,7 +61,7 @@ npm run test:intro-recovery
 
 The test uses a 390px touch viewport. With JavaScript disabled or Next script requests aborted, the overlay must be hidden, the hero logo visible, and scrolling usable. With an image decode promise that never resolves, the intro must start by the asset deadline and complete without leaving scroll locked. A normal run must also finish and reveal the hero. These intentionally injected failures do not prove a particular phone has blocked JavaScript.
 
-The changes are deployed from main. Confirm the deployment commit on `/motion-check`.
+The changes are deployed from main. Confirm the deployment commit in Vercel.
 
 ## Service stepped mask verification
 
@@ -73,6 +73,6 @@ On an actual phone, scroll slowly between every service with Reduce Motion both 
 
 Run `npm run test:motion-preference` after `npm run build` (install Chromium using `npx playwright install chromium` if needed).
 
-The test covers 375/390px touch browsers requesting reduced motion, blocked localStorage, and a 1440px desktop. Hero text must move while the brand intro is still visible, with the foreground above the intro layer. No animation preference button should exist. The diagnostic page must report full animations always enabled after navigation and reload; browser Reduce Motion ON/OFF is informational only.
+The test covers 375/390px touch browsers requesting reduced motion, blocked localStorage, and a 1440px desktop. Hero text must move while the brand intro is still visible, with the foreground above the intro layer. No animation preference button should exist. Full animation mode must remain enabled after reload, regardless of the browser’s Reduce Motion setting.
 
 On physical iPhone Safari and Android Chrome, confirm the same early hero text, forward/reverse service wipes, and subsequent section reveals. No saved setting or phone-setting change is required. Automated browser emulation is not physical phone certification.

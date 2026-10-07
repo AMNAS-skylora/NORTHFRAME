@@ -37,11 +37,8 @@ try {
     assert.ok(beforeIntroFinished,'Hero text was hidden until brand intro finished');
     assert.equal(await page.getByTestId('motion-preference-toggle').count(),0);
     assert.equal(await page.locator('html').getAttribute('data-motion'),'full');
-    await page.goto(origin+'/motion-check');
-    await page.getByTestId('effective-motion').filter({hasText:'always enabled'}).waitFor();
-    assert.equal(await page.getByTestId('motion-preference').textContent(),scenario.reduced==='reduce'?'ON':'OFF');
     await page.reload();
-    await page.getByTestId('effective-motion').filter({hasText:'always enabled'}).waitFor();
+    assert.equal(await page.locator('html').getAttribute('data-motion'),'full');
     assert.equal(await page.getByTestId('motion-preference-toggle').count(),0);
     // The minimal headless Chromium runner has no WebGL context. This check
     // covers DOM motion; desktop 3D still requires a GPU-capable browser.
