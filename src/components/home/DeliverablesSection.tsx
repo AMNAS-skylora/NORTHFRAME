@@ -65,7 +65,7 @@ export default function DeliverablesSection() {
       duration: window.innerWidth < 1024 ? 0.3 : 0.42,
       ease: "power2.out",
       overwrite: "auto",
-      force3D: true,
+      force3D: window.innerWidth >= 1024,
     });
   }, [activeIndex]);
 
@@ -166,7 +166,7 @@ export default function DeliverablesSection() {
             duration: compact ? 0.4 : 0.82,
             ease: "power3.inOut",
             overwrite: "auto",
-            force3D: true,
+            force3D: window.innerWidth >= 1024,
           }
         );
 
@@ -182,7 +182,7 @@ export default function DeliverablesSection() {
           duration: compact ? 0.4 : 0.74,
           ease: "power3.inOut",
           overwrite: "auto",
-          force3D: true,
+          force3D: window.innerWidth >= 1024,
           onComplete: () => {
             gsap.set(element, {
               visibility: "hidden",
@@ -222,7 +222,7 @@ export default function DeliverablesSection() {
           duration: compact ? 0.3 : 0.4,
           ease: "power2.out",
           overwrite: "auto",
-          force3D: true,
+          force3D: window.innerWidth >= 1024,
         }
       );
     }
@@ -292,7 +292,7 @@ export default function DeliverablesSection() {
                     duration: compact ? 0.7 : 0.86,
                     ease: "power3.inOut",
                     overwrite: "auto",
-                    force3D: true,
+                    force3D: window.innerWidth >= 1024,
                   }
                 );
               },
@@ -393,7 +393,7 @@ export default function DeliverablesSection() {
                       y,
                       width,
                       height,
-                      force3D: true,
+                      force3D: window.innerWidth >= 1024,
                     });
                   }
                 }
@@ -525,8 +525,8 @@ export default function DeliverablesSection() {
         ref={stickyRef}
         className="mobile-scroll-sticky h-[100svh] min-h-[100svh] w-full overflow-hidden bg-white lg:h-[100dvh] lg:min-h-[100dvh]"
       >
-        <div className="relative z-[1] flex h-full w-full flex-col justify-center overflow-hidden bg-white px-4 py-0 sm:px-8 md:px-12">
-          <div className="w-full max-w-[1500px] mx-auto min-h-[calc(var(--nf-mobile-vh,100svh)*0.72)] lg:min-h-[72vh] flex flex-col justify-center">
+        <div className="relative z-[1] flex h-full w-full flex-col justify-start lg:justify-center overflow-hidden bg-white px-4 pt-12 pb-0 lg:py-0 sm:px-8 md:px-12">
+          <div className="w-full max-w-[1500px] mx-auto min-h-[calc(var(--nf-mobile-vh,100svh)*0.72)] lg:min-h-[72vh] flex flex-col justify-start lg:justify-center">
             
             {/* Mobile Header Nav & Progress */}
             <div className="lg:hidden mx-auto flex w-full max-w-[540px] flex-col px-0 pt-[max(0.75rem,env(safe-area-inset-top))] mb-3">
@@ -599,7 +599,7 @@ export default function DeliverablesSection() {
                     <div
                       ref={desktopHighlightRef}
                       aria-hidden="true"
-                      className="pointer-events-none absolute left-0 top-0 z-0 bg-black will-change-transform"
+                      className="pointer-events-none absolute left-0 top-0 z-0 bg-black will-change-[opacity] lg:will-change-transform"
                     />
 
                     {deliverables.map((item, index) => {
@@ -663,7 +663,7 @@ export default function DeliverablesSection() {
                         ref={(element) => {
                           mediaRefs.current[index] = element;
                         }}
-                        className="absolute inset-0 flex h-full w-full items-center justify-center bg-black will-change-transform"
+                        className="absolute inset-0 flex h-full w-full items-center justify-center bg-black will-change-[opacity] lg:will-change-transform"
                         style={{
                           visibility: index === 0 ? "visible" : "hidden",
                           zIndex: index === 0 ? 20 : 1,

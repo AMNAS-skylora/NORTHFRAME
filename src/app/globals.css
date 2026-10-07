@@ -630,8 +630,7 @@ video {
   .hero,
   .shared-3d-background,
   .wat-we-doen-sticky,
-  #deliverables > .mobile-scroll-sticky,
-  .statement-stage {
+  #deliverables > .mobile-scroll-sticky {
     height: var(--nf-mobile-vh, 100svh);
     min-height: var(--nf-mobile-vh, 100svh);
   }
@@ -673,4 +672,8 @@ video {
       height: max(100%, 100dvh, var(--nf-visual-vh, 100dvh));
     }
   }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .statement-stage { height: var(--nf-mobile-vh, 100svh); min-height: var(--nf-mobile-vh, 100svh); }
 }
