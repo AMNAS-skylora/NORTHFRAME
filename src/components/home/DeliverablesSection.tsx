@@ -397,10 +397,13 @@ export default function DeliverablesSection() {
                   }
                 }
 
-                const calculatedIndex = Math.min(
-                  total - 1,
-                  Math.max(0, Math.round(position))
-                );
+                // A small deadband stops touch-scroll jitter at slide boundaries.
+                let calculatedIndex = compact ? activeIndexRef.current : Math.round(position);
+                if (compact) {
+                  while (calculatedIndex < total - 1 && position >= calculatedIndex + 0.58) calculatedIndex++;
+                  while (calculatedIndex > 0 && position <= calculatedIndex - 0.58) calculatedIndex--;
+                }
+                calculatedIndex = Math.min(total - 1, Math.max(0, calculatedIndex));
 
                 if (calculatedIndex !== activeIndexRef.current) {
                   activeIndexRef.current = calculatedIndex;
@@ -508,8 +511,6 @@ export default function DeliverablesSection() {
     }
   };
 
-  const currentDeliverable = deliverables[activeIndex];
-
   return (
     <section
       id="deliverables"
@@ -524,7 +525,7 @@ export default function DeliverablesSection() {
         className="mobile-scroll-sticky h-[100svh] min-h-[100svh] w-full overflow-hidden bg-white lg:h-[100dvh] lg:min-h-[100dvh]"
       >
         <div className="relative z-[1] flex h-full w-full flex-col justify-center overflow-hidden bg-white px-4 py-0 sm:px-8 md:px-12">
-          <div className="w-full max-w-[1500px] mx-auto min-h-[72vh] flex flex-col justify-center">
+          <div className="w-full max-w-[1500px] mx-auto min-h-[calc(var(--nf-mobile-vh,100svh)*0.72)] lg:min-h-[72vh] flex flex-col justify-center">
             
             {/* Mobile Header Nav & Progress */}
             <div className="lg:hidden mx-auto flex w-full max-w-[540px] flex-col px-0 pt-[max(0.75rem,env(safe-area-inset-top))] mb-3">
@@ -704,11 +705,18 @@ export default function DeliverablesSection() {
 
                 <div
                   ref={descRef}
-                  className="mt-3 lg:mt-5 min-h-[70px] lg:min-h-[72px] w-full max-w-[650px]"
+                  className="mt-3 lg:mt-5 grid min-h-[70px] lg:min-h-[72px] w-full max-w-[650px]"
                 >
-                  <p className="max-w-[620px] text-left font-sans text-[clamp(13px,1.1vw,17px)] font-normal leading-relaxed text-black/80">
-                    {currentDeliverable.description}
-                  </p>
+                  {deliverables.map((item, index) => (
+                    <p
+                      key={item.id}
+                      aria-hidden={index !== activeIndex}
+                      className="[grid-area:1/1] max-w-[620px] text-left font-sans text-[clamp(13px,1.1vw,17px)] font-normal leading-relaxed text-black/80"
+                      style={{ visibility: index === activeIndex ? "visible" : "hidden" }}
+                    >
+                      {item.description}
+                    </p>
+                  ))}
                 </div>
               </div>
 
