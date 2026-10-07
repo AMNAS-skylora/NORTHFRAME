@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import React, {
   useCallback,
   useEffect,
@@ -73,7 +75,7 @@ export default function Header() {
         (link): link is HTMLAnchorElement => Boolean(link)
       );
       const reducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
+        getReducedMotionQuery()
       ).matches;
       const mobile = window.innerWidth <= 768;
       const compactScale = getCompactScale();

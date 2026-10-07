@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -96,7 +98,7 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
     }
 
     const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
+      getReducedMotionQuery()
     ).matches;
     const viewportWidth = window.visualViewport?.width || window.innerWidth;
     const viewportHeight = window.visualViewport?.height || window.innerHeight;

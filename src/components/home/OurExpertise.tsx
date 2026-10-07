@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import { useRef } from "react";
 import { revealOnce } from "@/components/motion/revealOnce";
 import { useGSAP } from "@gsap/react";
@@ -23,7 +25,7 @@ export default function OurExpertise() {
       if (!container || !label || !copy) return;
 
       const reduced = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
+        getReducedMotionQuery()
       ).matches;
 
       if (reduced) {

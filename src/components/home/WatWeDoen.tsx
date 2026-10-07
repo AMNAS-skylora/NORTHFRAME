@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import { useRef } from "react";
 import Image from "next/image";
 import { TransitionLink } from "@/components/navigation/PageTransitionProvider";
@@ -45,7 +47,7 @@ export default function WatWeDoen() {
           phone: "(max-width: 768px)",
           tablet: "(min-width: 769px) and (max-width: 1023px)",
           desktop: "(min-width: 1024px)",
-          reduced: "(prefers-reduced-motion: reduce)",
+          reduced: getReducedMotionQuery(),
         },
         (context) => {
           const conditions = context.conditions as {

@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import React, { createContext, useCallback, useContext, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -105,7 +107,7 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
       !animate ||
       !wipe ||
       typeof wipe.animate !== "function" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      window.matchMedia(getReducedMotionQuery()).matches
     ) {
       moveToTarget();
       return true;
@@ -186,7 +188,7 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
     if (
       routeLine &&
       typeof routeLine.animate === "function" &&
-      !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      !window.matchMedia(getReducedMotionQuery()).matches
     ) {
       routeLineAnimationRef.current = routeLine.animate(
         [

@@ -455,11 +455,11 @@ body::-webkit-scrollbar {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-a-float,
-  .hero-a-interaction,
-  .hero-a-object,
-  .hero-logo-wrapper,
-  .service-item {
+  html:not([data-motion="full"]) .hero-a-float,
+  html:not([data-motion="full"]) .hero-a-interaction,
+  html:not([data-motion="full"]) .hero-a-object,
+  html:not([data-motion="full"]) .hero-logo-wrapper,
+  html:not([data-motion="full"]) .service-item {
     animation: none !important;
     transition-duration: 0.01ms !important;
   }
@@ -517,13 +517,13 @@ video {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html:focus-within {
+  html:not([data-motion="full"]):focus-within {
     scroll-behavior: auto;
   }
 
-  *,
-  *::before,
-  *::after {
+  html:not([data-motion="full"]) *,
+  html:not([data-motion="full"]) *::before,
+  html:not([data-motion="full"]) *::after {
     scroll-behavior: auto !important;
   }
 }

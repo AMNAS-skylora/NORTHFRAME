@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows } from "@react-three/drei";
@@ -386,7 +388,7 @@ export default function Shared3DBackground({
   );
   const [reducedMotion, setReducedMotion] = useState(() =>
     typeof window !== "undefined"
-      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? window.matchMedia(getReducedMotionQuery()).matches
       : false
   );
   const [isLowEndMobile, setIsLowEndMobile] = useState(false);
@@ -412,16 +414,20 @@ export default function Shared3DBackground({
       mobileLike &&
       (cores <= 4 || (typeof memory === "number" && memory <= 4) || saveData);
 
-    setIsLowEndMobile(lowEnd);
+    let active = true;
+    queueMicrotask(() => {
+      if (!active) return;
+      setIsLowEndMobile(lowEnd);
+      if (!mobileLike) setCanRenderCanvas(true);
+      else if (!introCompleted) setCanRenderCanvas(false);
+    });
 
     if (!mobileLike) {
-      setCanRenderCanvas(true);
-      return;
+      return () => { active = false; };
     }
 
     if (!introCompleted) {
-      setCanRenderCanvas(false);
-      return;
+      return () => { active = false; };
     }
 
     // Let the CSS-native hero entrance paint first. On lower-end phones,
@@ -434,12 +440,12 @@ export default function Shared3DBackground({
       });
     }, delay);
 
-    return () => window.clearTimeout(timer);
+    return () => { active = false; window.clearTimeout(timer); };
   }, [introCompleted]);
 
   useEffect(() => {
     const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const motionQuery = window.matchMedia(getReducedMotionQuery());
 
     const syncViewport = () => {
       const width = window.innerWidth;

@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import { useLayoutEffect, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -81,7 +83,7 @@ export default function SelectedWork() {
 
   useGSAP(
     () => {
-      if (!sectionRef.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (!sectionRef.current || window.matchMedia(getReducedMotionQuery()).matches) return;
 
       const cards = gsap.utils.toArray<HTMLElement>(
         sectionRef.current.querySelectorAll(".work-project-item")

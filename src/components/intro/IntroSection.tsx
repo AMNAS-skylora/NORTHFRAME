@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import { useRef } from "react";
 import { revealOnce } from "@/components/motion/revealOnce";
 import gsap from "gsap";
@@ -28,7 +30,7 @@ export default function IntroSection() {
       if (!container || !heading || !paragraph) return;
 
       const reducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
+        getReducedMotionQuery()
       ).matches;
 
       if (reducedMotion) {

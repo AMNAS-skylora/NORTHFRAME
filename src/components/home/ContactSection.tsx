@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import { revealOnce } from "@/components/motion/revealOnce";
 
 import {
@@ -70,12 +72,12 @@ export default function ContactSection() {
   const [submissionState, setSubmissionState] = useState<"success" | "error" | null>(null);
   const [isReducedMotion, setIsReducedMotion] = useState(() =>
     typeof window !== "undefined"
-      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? window.matchMedia(getReducedMotionQuery()).matches
       : false
   );
 
   useEffect(() => {
-    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const motionQuery = window.matchMedia(getReducedMotionQuery());
 
     const handleMotionChange = (event: MediaQueryListEvent) => {
       setIsReducedMotion(event.matches);
@@ -650,7 +652,7 @@ export default function ContactSection() {
               type="button"
               onClick={() => {
                 const reduced = window.matchMedia(
-                  "(prefers-reduced-motion: reduce)"
+                  getReducedMotionQuery()
                 ).matches;
 
                 window.scrollTo({

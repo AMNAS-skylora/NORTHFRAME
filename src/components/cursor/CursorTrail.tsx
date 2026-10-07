@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import { useEffect, useRef } from "react";
 
 interface NodePoint {
@@ -42,7 +44,7 @@ export default function CursorTrail() {
   useEffect(() => {
     // Disable on non-fine pointer (touch/mobile) or reduced motion preference
     const isFinePointer = window.matchMedia("(pointer: fine) and (hover: hover)").matches;
-    const isReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isReducedMotion = window.matchMedia(getReducedMotionQuery()).matches;
 
     if (!isFinePointer || isReducedMotion || !canvasRef.current) {
       return;

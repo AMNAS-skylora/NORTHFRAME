@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
@@ -24,7 +26,7 @@ export default function WorkPageClient() {
 
     const ctx = gsap.context(() => {
       const reduced = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
+        getReducedMotionQuery()
       ).matches;
 
       if (reduced) {

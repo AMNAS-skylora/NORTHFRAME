@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
@@ -243,7 +245,7 @@ export default function DeliverablesSection() {
           phone: "(max-width: 768px)",
           tablet: "(min-width: 769px) and (max-width: 1023px)",
           desktop: "(min-width: 1024px)",
-          reduced: "(prefers-reduced-motion: reduce)",
+          reduced: getReducedMotionQuery(),
         },
         (context) => {
           const conditions = context.conditions as {

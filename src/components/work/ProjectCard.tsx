@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import { useRef } from "react";
 import { revealOnce } from "@/components/motion/revealOnce";
 import Image from "next/image";
@@ -41,7 +43,7 @@ export function ProjectCard({
         return;
       }
 
-      const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const motionQuery = window.matchMedia(getReducedMotionQuery());
       if (motionQuery.matches) return;
 
       const mm = gsap.matchMedia();

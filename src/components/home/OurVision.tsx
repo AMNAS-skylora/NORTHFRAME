@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import { useRef } from "react";
 import { revealOnce } from "@/components/motion/revealOnce";
 import { useGSAP } from "@gsap/react";
@@ -19,7 +21,7 @@ export default function OurVision() {
     () => {
       if (typeof window === "undefined") return;
 
-      const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const motionQuery = window.matchMedia(getReducedMotionQuery());
       if (motionQuery.matches) return;
 
       const label = labelRef.current;

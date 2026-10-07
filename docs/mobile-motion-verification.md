@@ -68,3 +68,11 @@ The fixes live on `fix/mobile-reveal-fallback` until PR #1 is merged; the main p
 Run `npm run test:service-steps` after installing Playwright Chromium and building. It tests 375/390/430px touch viewports plus reduced motion. At the middle of the first wipe, hit testing must find the old panel on the left and the next panel on the right, proving a visible stepped edge. All panels must stay at opacity 1. The mobile clip container must have no transform; child image zoom is retained. The stage must stay sticky, reach the final panel and reverse. Reduced motion switches the same masks immediately instead of fading or running a large wipe.
 
 On an actual phone, turn Reduce Motion off for the animated wipe check, then scroll slowly between every service. The incoming image/text must share a staircase edge, not dissolve. Repeat upward, rotate and repeat. With Reduce Motion on, expect immediate panel changes without fading. Desktop polygons, pinning and timing are unchanged. Physical-device compositing still needs verification.
+
+## Explicit full-animation preference
+
+Run `npm run test:motion-preference` after `npm run build` (install Chromium using `npx playwright install chromium` if needed).
+
+On an actual iPhone with Reduce Motion ON, open `/motion-check`. Expect browser preference ON and device settings/static entrances. Tap **Enable full animations**; the page reloads and reports **Full animations enabled** while browser preference remains ON. Open the homepage: intro and hero text must animate; scroll services forward/backward and verify the stepped mask. Reload and navigate to Work and back: full mode must persist. Tap **Use device motion settings**; after reload, static entrances return. Repeat in Android Chrome with the device's reduced-animation setting enabled. With Reduce Motion OFF on desktop, no prompt should appear and the existing animations should run.
+
+Preference is scoped to this browser/site using localStorage. Switching modes reloads the page so existing GSAP contexts rebuild consistently. Blocked site storage displays an error and keeps the device preference. Physical Safari/Chrome verification remains necessary; automated Chromium emulation is not a physical phone test.

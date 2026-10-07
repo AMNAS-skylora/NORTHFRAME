@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import { revealOnce } from "@/components/motion/revealOnce";
 
 import { useLayoutEffect, useRef } from "react";
@@ -125,7 +127,7 @@ export default function OurUSPs() {
       const shape = shapeRef.current;
       if (!section || !content || !shape) return;
 
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      if (window.matchMedia(getReducedMotionQuery()).matches) {
         const motionTargets = [
           content,
           labelRef.current,

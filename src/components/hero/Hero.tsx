@@ -1,5 +1,7 @@
 "use client";
 
+import { getReducedMotionQuery } from "@/components/motion/motionPreference";
+
 import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -71,7 +73,7 @@ export default function Hero({ introCompleted }: HeroProps) {
         {
           mobile: "(max-width: 768px), (max-width: 1023px) and (hover: none) and (pointer: coarse)",
           desktop: "(min-width: 1024px), (min-width: 769px) and (hover: hover) and (pointer: fine)",
-          reducedMotion: "(prefers-reduced-motion: reduce)",
+          reducedMotion: getReducedMotionQuery(),
         },
         (context) => {
           const { reducedMotion } = context.conditions as {
@@ -291,7 +293,7 @@ export default function Hero({ introCompleted }: HeroProps) {
     () => {
       if (!introCompleted || !containerRef.current || !handoffRef.current) return;
 
-      const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const motionQuery = window.matchMedia(getReducedMotionQuery());
       if (motionQuery.matches) return;
 
       const mm = gsap.matchMedia();

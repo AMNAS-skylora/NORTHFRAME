@@ -5,6 +5,8 @@ import CursorTrail from "@/components/cursor/CursorTrail";
 import ScrollProgress from "@/components/scroll/ScrollProgress";
 import { PageTransitionProvider } from "@/components/navigation/PageTransitionProvider";
 import MotionRuntime from "@/components/motion/MotionRuntime";
+import MotionPreferenceControl from "@/components/motion/MotionPreferenceControl";
+import { MOTION_BOOTSTRAP } from "@/components/motion/motionPreference";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -44,9 +46,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${montserrat.variable} ${poppins.variable} ${pixelifySans.variable} h-full antialiased`}
     >
       <head>
+        <script dangerouslySetInnerHTML={{ __html: MOTION_BOOTSTRAP }} />
         <link
           rel="preload"
           href="/images/brand/northframe-icon.webp"
@@ -57,6 +61,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-[#05070B] text-white">
         <PageTransitionProvider>
           <MotionRuntime />
+          <MotionPreferenceControl />
           <CursorTrail />
           <ScrollProgress />
           {children}
@@ -65,4 +70,3 @@ export default function RootLayout({
     </html>
   );
 }
-
