@@ -60,10 +60,11 @@ export default async function WorkDetailPage({
         <TransitionLink
           href="/work"
           aria-label="Back to Work"
-          className="absolute left-[max(1.1rem,env(safe-area-inset-left))] top-[max(1.1rem,env(safe-area-inset-top))] z-30 inline-flex min-h-11 items-center gap-2 bg-white px-3 font-mono text-xs uppercase tracking-wider text-black focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1677FF] sm:left-8 sm:top-8"
+          className="absolute right-[max(1.1rem,env(safe-area-inset-right))] top-20 z-30 inline-flex min-h-11 items-center gap-2 bg-white px-3 font-mono text-xs uppercase tracking-wider text-black focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1677FF] sm:right-8 sm:top-24"
         >
           ← Back to Work
         </TransitionLink>
+        <TransitionLink href={`/work/${nextProject.slug}`} className="absolute right-[max(1.1rem,env(safe-area-inset-right))] top-36 z-30 inline-flex min-h-11 items-center bg-white px-3 font-mono text-xs uppercase tracking-wider text-black sm:right-8 sm:top-40">Next case →</TransitionLink>
         <header className="absolute inset-x-0 bottom-0 z-10 px-[max(1.1rem,env(safe-area-inset-left))] pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-10 sm:pb-12 lg:px-16 lg:pb-16">
           <span className="inline-block bg-[#1677FF] px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white sm:text-xs">
             {project.category}

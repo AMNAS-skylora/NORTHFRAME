@@ -85,7 +85,7 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
   const cancelWipe = useCallback(() => {
     wipeAnimationRef.current?.cancel();
     wipeAnimationRef.current = null;
-    if (wipeRef.current) wipeRef.current.style.transform = "translateY(100%)";
+    if (wipeRef.current) wipeRef.current.style.transform = "translateX(-100%)";
   }, []);
 
   const scrollToSection = useCallback((targetHash: string, animate = false) => {
@@ -116,14 +116,14 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
     // A short, transform-only wipe masks a long jump across pinned sections
     // without making the browser animate every intervening scroll trigger.
     const enter = wipe.animate(
-      [{ transform: "translateY(100%)" }, { transform: "translateY(0)" }],
+      [{ transform: "translateX(-100%)" }, { transform: "translateX(0)" }],
       { duration: 170, easing: "cubic-bezier(0.65, 0, 0.35, 1)", fill: "forwards" }
     );
     wipeAnimationRef.current = enter;
     enter.onfinish = () => {
       moveToTarget();
       const leave = wipe.animate(
-        [{ transform: "translateY(0)" }, { transform: "translateY(-100%)" }],
+        [{ transform: "translateX(0)" }, { transform: "translateX(100%)" }],
         { duration: 210, easing: "cubic-bezier(0.65, 0, 0.35, 1)", fill: "forwards" }
       );
       enter.cancel();
@@ -185,6 +185,14 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
     cancelWipe();
     routeLineAnimationRef.current?.cancel();
     const routeLine = routeLineRef.current;
+    const wipe = wipeRef.current;
+    if (wipe && !document.querySelector("[data-project-transition]")) {
+      wipeAnimationRef.current = wipe.animate(
+        [{ transform: "translateX(-100%)" }, { transform: "translateX(0)", offset: 0.45 }, { transform: "translateX(100%)" }],
+        { duration: 600, easing: "cubic-bezier(0.65,0,0.35,1)" }
+      );
+      wipeAnimationRef.current.onfinish = cancelWipe;
+    }
     if (
       routeLine &&
       typeof routeLine.animate === "function" &&
@@ -211,7 +219,7 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
         ref={wipeRef}
         aria-hidden="true"
         className="pointer-events-none fixed inset-0 z-[99999] bg-[#1677FF]"
-        style={{ transform: "translateY(100%)" }}
+        style={{ transform: "translateX(-100%)" }}
       />
       <div
         ref={routeLineRef}

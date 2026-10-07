@@ -24,6 +24,9 @@ interface SavedScrollStyles {
 }
 
 
+let introSeen = false;
+const INTRO_SEEN_KEY = "northframe-intro-seen";
+
 export default function BrandIntro({ onComplete }: BrandIntroProps) {
   const [isVisible, setIsVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -53,6 +56,8 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
   const finishIntro = useCallback(() => {
     if (finishedRef.current) return;
     finishedRef.current = true;
+    introSeen = true;
+    try { sessionStorage.setItem(INTRO_SEEN_KEY, "1"); } catch {}
     timelineRef.current?.kill();
     timelineRef.current = null;
     restoreScroll();
@@ -67,6 +72,12 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
 
   useLayoutEffect(() => {
     if (!isVisible) return;
+    let alreadySeen = introSeen;
+    try { alreadySeen ||= sessionStorage.getItem(INTRO_SEEN_KEY) === "1"; } catch {}
+    if (alreadySeen) {
+      finishIntro();
+      return;
+    }
 
     // Arm recovery before locking scroll or starting GSAP. Passive effects can
     // be delayed; the server-rendered overlay must never depend on hydration.

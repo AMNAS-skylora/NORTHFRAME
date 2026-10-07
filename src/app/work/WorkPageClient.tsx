@@ -4,7 +4,7 @@ import Header from "@/components/navigation/Header";
 import { ProjectCard } from "@/components/work/ProjectCard";
 import { workDetails } from "@/data/work";
 
-const columns = ["lg:col-start-8", "lg:col-start-1", "lg:col-start-7"];
+const columns = ["lg:col-start-1", "lg:col-start-8"];
 
 export default function WorkPageClient() {
   return (
@@ -19,8 +19,8 @@ export default function WorkPageClient() {
           <ProjectCard
             key={project.slug}
             dark
-            project={{ ...project, id: index + 1, alt: project.imageAlt, desktopColumn: columns[index % 3] }}
-            gridClass={`lg:col-span-4 ${columns[index % 3]}`}
+            project={{ ...project, id: index + 1, alt: project.imageAlt, desktopColumn: columns[index % 2] }}
+            gridClass={`lg:col-span-5 ${columns[index % 2]} ${index % 2 === 1 ? "lg:mt-40" : ""}`}
           />
         ))}
       </section>

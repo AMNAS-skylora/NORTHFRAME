@@ -21,14 +21,14 @@ export function expandProjectImage(source: HTMLImageElement | null, slug: string
   const width = window.innerWidth;
   const height = window.innerHeight;
   // A short inward beat on black, then open the same image into the cover.
-  const shrink = 0.9;
+  const shrink = Math.min(0.72, width * 0.65 / bounds.width, height * 0.55 / bounds.height);
   const smallWidth = bounds.width * shrink;
   const smallHeight = bounds.height * shrink;
   const imageExpansion = image.animate([
     { offset: 0, width: `${bounds.width}px`, height: `${bounds.height}px`, transform: `translate(${bounds.left}px,${bounds.top}px)` },
-    { offset: 0.24, width: `${smallWidth}px`, height: `${smallHeight}px`, transform: `translate(${bounds.left + (bounds.width - smallWidth) / 2}px,${bounds.top + (bounds.height - smallHeight) / 2}px)` },
+    { offset: 0.38, width: `${smallWidth}px`, height: `${smallHeight}px`, transform: `translate(${(width - smallWidth) / 2}px,${(height - smallHeight) / 2}px)` },
     { offset: 1, width: `${width}px`, height: `${height}px`, transform: "translate(0px,0px)" },
-  ], { duration: 950, easing: "cubic-bezier(0.4,0,0.2,1)", fill: "forwards" });
+  ], { duration: 1100, easing: "cubic-bezier(0.4,0,0.2,1)", fill: "forwards" });
   let frame = 0;
   let finished = false;
   const cleanup = () => {
