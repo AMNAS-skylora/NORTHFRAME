@@ -26,7 +26,7 @@ export default function HeroContent({
     >
       <div
         ref={logoWrapperRef}
-        className="hero-logo-wrapper pointer-events-auto shrink-0 select-none opacity-0"
+        className="hero-logo-wrapper pointer-events-auto shrink-0 select-none"
       >
         <Image
           src="/images/brand/northframe-logo.webp"

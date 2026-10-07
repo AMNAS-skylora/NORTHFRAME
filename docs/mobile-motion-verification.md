@@ -48,3 +48,17 @@ Find its LAN address with `ipconfig` (Windows), `ipconfig getifaddr en0` (macOS 
 | Desktop Chrome/Safari | Open localhost:3000 at 1440×900; scroll services forward/back; resize to 390px and back | Desktop pinning/transitions and text reveals work; no duplicate pin spacing or hidden content after resizing |
 
 For failing iPhone runs, use a Mac's Safari → Develop → [iPhone] → page to collect console errors. For Android, connect USB with debugging enabled and inspect through desktop Chrome `chrome://inspect/#devices`. Record the commit/deployment URL alongside the error.
+
+## Intro stuck before hydration
+
+`BrandIntro.tsx` used to render an opaque full-screen overlay in server HTML. Its 4-second timeout only ran after client hydration. Missing/blocked JavaScript could therefore leave the overlay forever. The overlay now starts hidden and non-interactive; GSAP activates it only when the client is ready. The hero logo is visible in server HTML too. A recovery timer is armed in the layout effect before scroll locking/GSAP setup. Normal intro timing is preserved.
+
+```sh
+npx playwright install --with-deps chromium
+npm run build
+npm run test:intro-recovery
+```
+
+The test uses a 390px touch viewport. With JavaScript disabled or Next script requests aborted, the overlay must be hidden, the hero logo visible, and scrolling usable. With an image decode promise that never resolves, the intro must start by the asset deadline and complete without leaving scroll locked. A normal run must also finish and reveal the hero. These intentionally injected failures do not prove a particular phone has blocked JavaScript.
+
+The fixes live on `fix/mobile-reveal-fallback` until PR #1 is merged; the main production URL continues to serve the previous code meanwhile. Verify the PR preview before comparing results.

@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:mobile-motion": "node scripts/check-mobile-motion.mjs"
+    "test:mobile-motion": "node scripts/check-mobile-motion.mjs",
+    "test:intro-recovery": "node scripts/check-intro-recovery.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
