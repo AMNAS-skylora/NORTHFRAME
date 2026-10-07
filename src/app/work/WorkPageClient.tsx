@@ -4,6 +4,7 @@ import { getReducedMotionQuery } from "@/components/motion/motionPreference";
 
 import { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
+import { expandProjectImage } from "@/components/work/expandProjectImage";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Header from "@/components/navigation/Header";
@@ -267,6 +268,11 @@ export default function WorkPageClient() {
             <TransitionLink
               key={project.num}
               href={`/work/${project.slug}`}
+              onClick={(event) => {
+                if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+                  expandProjectImage(event.currentTarget.querySelector("img"), project.slug);
+                }
+              }}
               className="group block cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1677FF] focus-visible:ring-offset-4 focus-visible:ring-offset-[#05070A]"
             >
               <div
