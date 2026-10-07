@@ -1,5 +1,7 @@
 "use client";
 
+import { revealOnce } from "@/components/motion/revealOnce";
+
 import { useLayoutEffect, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -257,26 +259,11 @@ export default function OurUSPs() {
             },
           });
 
-          let observer: IntersectionObserver | null = null;
+          let stopReveal = () => {};
           let trigger: ScrollTrigger | null = null;
 
           if (useObserver) {
-            if ("IntersectionObserver" in window) {
-              observer = new IntersectionObserver(
-                ([entry]) => {
-                  if (!entry?.isIntersecting) return;
-                  timeline.play(0);
-                  observer?.disconnect();
-                },
-                {
-                  threshold: 0.01,
-                  rootMargin: "0px 0px -5% 0px",
-                }
-              );
-              observer.observe(card);
-            } else {
-              timeline.play(0);
-            }
+            stopReveal = revealOnce(card, () => timeline.play(0), 0.95);
           } else {
             trigger = ScrollTrigger.create({
               trigger: card,
@@ -324,13 +311,13 @@ export default function OurUSPs() {
               0.34
             );
 
-          return { timeline, observer, trigger };
+          return { timeline, stopReveal, trigger };
         });
 
         return () => {
           timelines.forEach((item) => {
             if (!item) return;
-            item.observer?.disconnect();
+            item.stopReveal();
             item.trigger?.kill();
             item.timeline.kill();
           });
@@ -378,29 +365,14 @@ export default function OurUSPs() {
               }),
         });
 
-        let observer: IntersectionObserver | null = null;
+        let stopReveal = () => {};
 
         if (useObserver) {
-          if ("IntersectionObserver" in window) {
-            observer = new IntersectionObserver(
-              ([entry]) => {
-                if (!entry?.isIntersecting) return;
-                tween.play(0);
-                observer?.disconnect();
-              },
-              {
-                threshold: 0.01,
-                rootMargin: "0px 0px -5% 0px",
-              }
-            );
-            observer.observe(element);
-          } else {
-            tween.play(0);
-          }
+          stopReveal = revealOnce(element, () => tween.play(0), 0.95);
         }
 
         return () => {
-          observer?.disconnect();
+          stopReveal();
           tween.scrollTrigger?.kill();
           tween.kill();
         };
@@ -408,8 +380,8 @@ export default function OurUSPs() {
 
       mm.add("(max-width: 768px), (max-width: 1023px) and (hover: none) and (pointer: coarse)", () => {
         const cleanups = [
-          buildStandaloneReveal(labelRef.current, "top 88%", 18, 0.58),
-          buildStandaloneReveal(ctaRef.current, "top 88%", 22, 0.64, 0.1),
+          buildStandaloneReveal(labelRef.current, "top 88%", 18, 0.58, 0, true),
+          buildStandaloneReveal(ctaRef.current, "top 88%", 22, 0.64, 0.1, true),
         ];
         return () => cleanups.forEach((cleanup) => cleanup());
       });
@@ -423,7 +395,7 @@ export default function OurUSPs() {
       });
 
       mm.add("(max-width: 768px), (max-width: 1023px) and (hover: none) and (pointer: coarse)", () =>
-        buildCardTextReveals(30, 0.72, 0.62, "top 86%")
+        buildCardTextReveals(30, 0.72, 0.62, "top 86%", true)
       );
 
       mm.add("(min-width: 769px) and (max-width: 1023px) and (hover: hover) and (pointer: fine)", () =>

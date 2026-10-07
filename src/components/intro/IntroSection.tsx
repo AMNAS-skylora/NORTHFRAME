@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { revealOnce } from "@/components/motion/revealOnce";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -91,29 +92,12 @@ export default function IntroSection() {
           "-=0.22"
         );
 
-      let observer: IntersectionObserver | null = null;
-
-      if (mobileLike) {
-        if ("IntersectionObserver" in window) {
-          observer = new IntersectionObserver(
-            ([entry]) => {
-              if (!entry?.isIntersecting) return;
-              timeline.play(0);
-              observer?.disconnect();
-            },
-            {
-              threshold: 0.01,
-              rootMargin: "0px 0px -12% 0px",
-            }
-          );
-          observer.observe(container);
-        } else {
-          timeline.play(0);
-        }
-      }
+      const stopReveal = mobileLike
+        ? revealOnce(container, () => timeline.play(0), .88)
+        : () => {};
 
       return () => {
-        observer?.disconnect();
+        stopReveal();
         timeline.scrollTrigger?.kill();
         timeline.kill();
       };

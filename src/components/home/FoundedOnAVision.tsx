@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { revealOnce } from "@/components/motion/revealOnce";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -164,46 +165,14 @@ export default function FoundedOnAVision() {
               0
             );
 
-          const observers: IntersectionObserver[] = [];
-
-          if (mobile) {
-            const observeOnce = (
-              target: Element,
-              play: () => void,
-              rootMargin: string
-            ) => {
-              if (!("IntersectionObserver" in window)) {
-                play();
-                return;
-              }
-
-              const observer = new IntersectionObserver(
-                ([entry]) => {
-                  if (!entry?.isIntersecting) return;
-                  play();
-                  observer.disconnect();
-                },
-                {
-                  threshold: 0.01,
-                  rootMargin,
-                }
-              );
-
-              observer.observe(target);
-              observers.push(observer);
-            };
-
-            observeOnce(label, () => labelTween.play(0), "0px 0px -4% 0px");
-            observeOnce(text, () => textTween.play(0), "0px 0px -6% 0px");
-            observeOnce(
-              visual,
-              () => visualTimeline.play(0),
-              "0px 0px -5% 0px"
-            );
-          }
+          const stopReveals = mobile ? [
+            revealOnce(label, () => labelTween.play(0), 0.96),
+            revealOnce(text, () => textTween.play(0), 0.94),
+            revealOnce(visual, () => visualTimeline.play(0), 0.95),
+          ] : [];
 
           return () => {
-            observers.forEach((observer) => observer.disconnect());
+            stopReveals.forEach((stop) => stop());
             labelTween.scrollTrigger?.kill();
             labelTween.kill();
             textTween.scrollTrigger?.kill();

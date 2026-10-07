@@ -124,6 +124,7 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
 
     const startTimeline = () => {
       if (cancelled || finishedRef.current || timelineRef.current) return;
+      window.clearTimeout(assetFallbackTimer);
 
       const timeline = gsap.timeline({
         onComplete: finishIntro,
@@ -168,6 +169,10 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
 
     const image = imageRef.current;
 
+    // Bound the complete-image decode path too. A delayed decode promise must
+    // not hold the logo until the outer fail-safe skips the entire intro.
+    assetFallbackTimer = window.setTimeout(startTimeline, 1400);
+
     if (reducedMotion || !image) {
       startTimeline();
     } else if (image.complete && image.naturalWidth > 0) {
@@ -199,8 +204,6 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
         image.removeEventListener("error", handleError);
       };
 
-      // Never leave the screen blocked if an in-app browser delays image events.
-      assetFallbackTimer = window.setTimeout(startTimeline, 1400);
     }
 
     return () => {
