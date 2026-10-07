@@ -30,7 +30,7 @@ try {
     const errors=[];page.on('pageerror',e=>errors.push(e.message));
     await page.goto(origin,{waitUntil:'domcontentloaded'});
     await page.waitForTimeout(6000);
-    await scrollToProgress(page, scenario.reduced ? 0.25 / 4.2 : 1.63 / 5.2);
+    await scrollToProgress(page, 1.63 / 5.2);
     const state=await page.locator('#wat-we-doen').evaluate(section=>{
       const stage=section.querySelector('.wat-we-doen-sticky');const r=stage.getBoundingClientRect();
       const panels=[...section.querySelectorAll('article')];
@@ -43,12 +43,8 @@ try {
     assert.deepEqual(state.opacity,['1','1','1','1','1'],'Service panels crossfade');
     assert.equal(state.transform,'none','Mobile clip container is transformed');
     assert.ok(state.clip.startsWith('polygon('),'Stepped polygon is missing');
-    if(!scenario.reduced){
-      assert.equal(state.left,0,'Left step does not expose the preceding panel');
-      assert.equal(state.right,1,'Right step does not reveal the next panel');
-    }else{
-      assert.equal(state.left,1);assert.equal(state.right,1);
-    }
+    assert.equal(state.left,0,'Left step does not expose the preceding panel');
+    assert.equal(state.right,1,'Right step does not reveal the next panel');
     await scrollToProgress(page,1);
     assert.ok((await page.locator('#wat-we-doen article').last().evaluate(e=>getComputedStyle(e).clipPath)).includes('-48%'));
     await scrollToProgress(page,0);

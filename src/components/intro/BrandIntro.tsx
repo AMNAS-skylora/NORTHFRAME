@@ -224,7 +224,7 @@ export default function BrandIntro({ onComplete }: BrandIntroProps) {
       ref={containerRef}
       aria-hidden="true"
       style={{ visibility: "hidden", opacity: 0, pointerEvents: "none" }}
-      className="brand-intro-root fixed inset-0 z-[200] flex h-[100dvh] min-h-[100svh] w-full items-center justify-center overflow-hidden bg-[#070B14] select-none touch-none"
+      className="brand-intro-root fixed inset-0 z-[5] flex h-[100dvh] min-h-[100svh] w-full items-center justify-center overflow-hidden bg-[#070B14] select-none touch-none"
     >
       <div ref={markRef} className="brand-intro-mark relative z-10 h-[68px] w-[68px] opacity-0 will-change-transform sm:h-[92px] sm:w-[92px]">
         <img

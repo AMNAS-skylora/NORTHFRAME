@@ -41,8 +41,9 @@ try {
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
     await page.goto(origin, { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(1800);
+    const loadedAt = Date.now();
     if (failure === 'disabled-js' || failure === 'blocked-chunks') {
+      await page.waitForTimeout(1800);
       assert.equal(await page.locator('.brand-intro-root').isVisible(), false,
         'Server overlay blocks the page without hydration');
       assert.equal(await page.locator('.hero-logo-wrapper').evaluate(e => getComputedStyle(e).opacity), '1');
@@ -50,10 +51,6 @@ try {
       await page.evaluate(() => window.scrollTo(0, 600));
       assert.ok(await page.evaluate(() => scrollY > 0), 'Page cannot scroll without JS');
     } else {
-      if (failure === 'stalled-decode') {
-        assert.ok(Number(await page.locator('.brand-intro-mark').evaluate(e => getComputedStyle(e).opacity)) > 0,
-          'Intro never starts when decode stalls');
-      }
       let sawTextMovement = false;
       for (let i = 0; i < 70; i++) {
         const text = await page.locator('.service-item-text').first().evaluate(e => {
@@ -66,6 +63,12 @@ try {
         await page.waitForTimeout(90);
       }
       assert.ok(sawTextMovement, 'Hero text never animated between its hidden and visible states');
+      await page.waitForTimeout(Math.max(0, 1800 - (Date.now() - loadedAt)));
+      if (failure === 'stalled-decode') {
+        assert.ok(Number(await page.locator('.brand-intro-mark').evaluate(e => getComputedStyle(e).opacity)) > 0,
+          'Intro never starts when decode stalls');
+      }
+      await page.locator('.brand-intro-root').waitFor({ state: 'detached', timeout: 5000 });
       await page.waitForTimeout(600);
       assert.equal(await page.locator('.brand-intro-root').count(), 0);
       assert.notEqual(await page.evaluate(() => document.body.style.overflow), 'hidden');

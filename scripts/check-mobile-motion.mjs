@@ -57,7 +57,7 @@ try {
     await page.goto(origin, { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(6000);
     assert.equal(await page.locator('.brand-intro-root').count(), 0, 'Intro left the page locked');
-    if (!scenario.reduced) {
+    {
       assert.ok((await page.locator('.our-expertise-mobile-copy').evaluate(e =>
         getComputedStyle(e).clipPath)).includes('100%'), 'Offscreen reveals played before the user reached them');
     }
@@ -85,7 +85,7 @@ try {
       assert.ok(Math.abs(state.top) < 2, 'Mobile stage lost its sticky position');
       if (progress === 1) {
         assert.equal(state.opacity, '1');
-        assert.ok(scenario.reduced || state.clip.includes('-48%'), 'Final service did not reveal');
+        assert.ok(state.clip.includes('-48%'), 'Final service did not reveal');
       }
     }
     assert.deepEqual(errors, [], 'Browser runtime errors');
