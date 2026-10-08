@@ -260,7 +260,7 @@ export default function StatementSection() {
     }
   );
 
-  const headingClass = "m-0 flex w-full flex-col items-center justify-center gap-1 md:gap-[clamp(6px,1.4svh,14px)] text-center font-pixel font-bold uppercase leading-[0.86] tracking-[-0.035em]";
+  const headingClass = "m-0 flex w-full flex-col items-center justify-center gap-[clamp(6px,1.4svh,14px)] text-center font-pixel font-bold uppercase leading-[0.86] tracking-[-0.035em]";
 
   const renderWowLetters = (onBlack: boolean) => (
     <>
@@ -287,8 +287,8 @@ export default function StatementSection() {
         ref={index === 4 ? wowRef : undefined}
         className={`${index === 4 ? "relative left-1/2 block w-max -translate-x-1/2" : "relative inline-block"} whitespace-nowrap px-[0.06em] ${
           index === 4
-            ? "text-[60px] md:text-[clamp(68px,min(16vw,20svh),220px)]"
-            : "text-[60px] md:text-[clamp(60px,min(14vw,18svh),205px)]"
+            ? "text-[clamp(48px,min(22vw,16svh),96px)] md:text-[clamp(68px,min(16vw,20svh),220px)]"
+            : "text-[clamp(48px,min(22vw,16svh),96px)] md:text-[clamp(60px,min(14vw,18svh),205px)]"
         } text-black`}
       >
         <span>{index === 4 ? renderWowLetters(false) : word}</span>
@@ -335,7 +335,7 @@ export default function StatementSection() {
 
       <div
         ref={stageRef}
-        className="statement-stage relative z-10 flex h-auto min-h-0 md:h-[100svh] md:min-h-[100svh] w-full items-center justify-center overflow-hidden bg-[#1677FF] px-3 py-2 md:py-[clamp(1.5rem,4svh,3rem)] select-none lg:h-[100dvh] lg:min-h-[100dvh]"
+        className="statement-stage relative z-10 flex h-[var(--nf-mobile-vh,100svh)] min-h-[var(--nf-mobile-vh,100svh)] md:h-[100svh] md:min-h-[100svh] w-full items-center justify-center overflow-hidden bg-[#1677FF] px-3 py-4 md:py-[clamp(1.5rem,4svh,3rem)] select-none lg:h-[100dvh] lg:min-h-[100dvh]"
       >
         <h2 ref={headingRef} aria-label="We make brands go wow" className={`relative z-10 ${headingClass}`}>{renderWords()}</h2>
 
