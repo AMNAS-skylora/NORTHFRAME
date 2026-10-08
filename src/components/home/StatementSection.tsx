@@ -187,8 +187,8 @@ export default function StatementSection() {
           const topEdgeTimeline = gsap.timeline({
             scrollTrigger: {
               trigger: topStep,
-              start: "top 100%",
-              end: "bottom 42%",
+              start: conditions.phone || conditions.tablet ? "top 50%" : "top 100%",
+              end: conditions.phone || conditions.tablet ? "bottom 8%" : "bottom 42%",
               scrub: 0.18,
               invalidateOnRefresh: true,
             },
@@ -310,7 +310,7 @@ export default function StatementSection() {
     <section
       id="statement"
       ref={sectionRef}
-      className="relative isolate z-40 mt-[6svh] w-full bg-[#1677FF] p-0 text-black pointer-events-auto lg:-mt-[80dvh]"
+      className="relative isolate z-40 -mt-[calc(var(--nf-mobile-vh,100svh)*0.8)] w-full bg-[#1677FF] p-0 text-black pointer-events-auto lg:-mt-[80dvh]"
       aria-label="We make brands go wow"
     >
       <div
