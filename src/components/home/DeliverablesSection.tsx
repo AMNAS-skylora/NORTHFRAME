@@ -227,13 +227,6 @@ export default function DeliverablesSection() {
       );
     }
 
-    if (compact && mobileProgressFillRef.current) {
-      gsap.to(mobileProgressFillRef.current, {
-        scaleX: (activeIndex + 1) / deliverables.length,
-        duration: 0.3,
-        overwrite: true,
-      });
-    }
     prevIndexRef.current = activeIndex;
   }, [activeIndex]);
 
@@ -268,13 +261,6 @@ export default function DeliverablesSection() {
           const desktop = Boolean(conditions.desktop);
           const reduced = Boolean(conditions.reduced);
           const compact = phone || tablet;
-          // Touch scrolling stays native: no held stage, scroll-driven tab
-          // changes or spacer that can jump when Safari changes its toolbar.
-          if (compact) {
-            master.style.height = "";
-            scrollTriggerRef.current = null;
-            return;
-          }
           const exitHold = 0.9;
 
           const mediaStage = mediaStageRef.current;
@@ -342,6 +328,77 @@ export default function DeliverablesSection() {
 
           syncStageHeight();
 
+          const updateStory = (progress: number) => {
+            const servicePhase = total / (total + exitHold);
+            const serviceProgress = Math.min(
+              1,
+              Math.max(0, progress / servicePhase)
+            );
+            const continuousScale = Math.max(
+              1 / total,
+              serviceProgress
+            );
+
+            if (progressFillRef.current) {
+              gsap.set(progressFillRef.current, {
+                scaleY: continuousScale,
+              });
+            }
+
+            if (mobileProgressFillRef.current) {
+              gsap.set(mobileProgressFillRef.current, {
+                scaleX: continuousScale,
+              });
+            }
+
+            const position = serviceProgress * (total - 1);
+            const fromIndex = Math.floor(position);
+            const toIndex = Math.min(total - 1, fromIndex + 1);
+            const mix = position - fromIndex;
+
+            if (desktop) {
+              const highlight = desktopHighlightRef.current;
+              const fromItem = desktopItemRefs.current[fromIndex];
+              const toItem = desktopItemRefs.current[toIndex];
+
+              if (highlight && fromItem && toItem) {
+                const x =
+                  fromItem.offsetLeft +
+                  (toItem.offsetLeft - fromItem.offsetLeft) * mix;
+                const y =
+                  fromItem.offsetTop +
+                  (toItem.offsetTop - fromItem.offsetTop) * mix;
+                const width =
+                  fromItem.offsetWidth +
+                  (toItem.offsetWidth - fromItem.offsetWidth) * mix;
+                const height =
+                  fromItem.offsetHeight +
+                  (toItem.offsetHeight - fromItem.offsetHeight) * mix;
+
+                gsap.set(highlight, {
+                  x,
+                  y,
+                  width,
+                  height,
+                  force3D: window.innerWidth >= 1024,
+                });
+              }
+            }
+
+            // A small deadband stops touch-scroll jitter at slide boundaries.
+            let calculatedIndex = compact ? activeIndexRef.current : Math.round(position);
+            if (compact) {
+              while (calculatedIndex < total - 1 && position >= calculatedIndex + 0.58) calculatedIndex++;
+              while (calculatedIndex > 0 && position <= calculatedIndex - 0.58) calculatedIndex--;
+            }
+            calculatedIndex = Math.min(total - 1, Math.max(0, calculatedIndex));
+
+            if (calculatedIndex !== activeIndexRef.current) {
+              activeIndexRef.current = calculatedIndex;
+              setActiveIndex(calculatedIndex);
+            }
+          };
+
           const timeline = gsap.timeline({
             scrollTrigger: {
               trigger: master,
@@ -356,80 +413,15 @@ export default function DeliverablesSection() {
               refreshPriority: 1,
               onRefreshInit: syncStageHeight,
               onUpdate: (self) => {
-                const servicePhase = total / (total + exitHold);
-                const serviceProgress = Math.min(
-                  1,
-                  Math.max(0, self.progress / servicePhase)
-                );
-                const continuousScale = Math.max(
-                  1 / total,
-                  serviceProgress
-                );
-
-                if (progressFillRef.current) {
-                  gsap.set(progressFillRef.current, {
-                    scaleY: continuousScale,
-                  });
-                }
-
-                if (mobileProgressFillRef.current) {
-                  gsap.set(mobileProgressFillRef.current, {
-                    scaleX: continuousScale,
-                  });
-                }
-
-                const position = serviceProgress * (total - 1);
-                const fromIndex = Math.floor(position);
-                const toIndex = Math.min(total - 1, fromIndex + 1);
-                const mix = position - fromIndex;
-
-                if (desktop) {
-                  const highlight = desktopHighlightRef.current;
-                  const fromItem = desktopItemRefs.current[fromIndex];
-                  const toItem = desktopItemRefs.current[toIndex];
-
-                  if (highlight && fromItem && toItem) {
-                    const x =
-                      fromItem.offsetLeft +
-                      (toItem.offsetLeft - fromItem.offsetLeft) * mix;
-                    const y =
-                      fromItem.offsetTop +
-                      (toItem.offsetTop - fromItem.offsetTop) * mix;
-                    const width =
-                      fromItem.offsetWidth +
-                      (toItem.offsetWidth - fromItem.offsetWidth) * mix;
-                    const height =
-                      fromItem.offsetHeight +
-                      (toItem.offsetHeight - fromItem.offsetHeight) * mix;
-
-                    gsap.set(highlight, {
-                      x,
-                      y,
-                      width,
-                      height,
-                      force3D: window.innerWidth >= 1024,
-                    });
-                  }
-                }
-
-                // A small deadband stops touch-scroll jitter at slide boundaries.
-                let calculatedIndex = compact ? activeIndexRef.current : Math.round(position);
-                if (compact) {
-                  while (calculatedIndex < total - 1 && position >= calculatedIndex + 0.58) calculatedIndex++;
-                  while (calculatedIndex > 0 && position <= calculatedIndex - 0.58) calculatedIndex--;
-                }
-                calculatedIndex = Math.min(total - 1, Math.max(0, calculatedIndex));
-
-                if (calculatedIndex !== activeIndexRef.current) {
-                  activeIndexRef.current = calculatedIndex;
-                  setActiveIndex(calculatedIndex);
-                }
+                if (!compact) updateStory(self.progress);
               },
               onLeave: () => {
+                if (compact) return;
                 activeIndexRef.current = total - 1;
                 setActiveIndex(total - 1);
               },
               onLeaveBack: () => {
+                if (compact) return;
                 activeIndexRef.current = 0;
                 setActiveIndex(0);
               },
@@ -438,6 +430,11 @@ export default function DeliverablesSection() {
 
           scrollTriggerRef.current = timeline.scrollTrigger ?? null;
           timeline.to({}, { duration: 1 });
+          if (compact) {
+            // Use the scrubbed timeline progress, rather than raw touch events.
+            // Fast gestures then settle smoothly without toggling adjacent tabs.
+            timeline.eventCallback("onUpdate", () => updateStory(timeline.progress()));
+          }
 
           let frameA = 0;
           let frameB = 0;
@@ -536,7 +533,7 @@ export default function DeliverablesSection() {
     >
       <div
         ref={stickyRef}
-        className="relative w-full bg-white lg:sticky lg:top-0 lg:h-[100dvh] lg:min-h-[100dvh] lg:overflow-hidden"
+        className="sticky top-0 min-h-[var(--nf-mobile-vh,100svh)] w-full bg-white lg:h-[100dvh] lg:min-h-[100dvh] lg:overflow-hidden"
       >
         <div className="relative z-[1] flex lg:h-full w-full flex-col justify-start lg:justify-center overflow-hidden bg-white px-4 pt-12 pb-6 lg:py-0 sm:px-8 md:px-12">
           <div className="w-full max-w-[1500px] mx-auto min-h-0 lg:min-h-[72vh] flex flex-col justify-start lg:justify-center">
