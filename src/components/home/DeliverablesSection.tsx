@@ -227,6 +227,13 @@ export default function DeliverablesSection() {
       );
     }
 
+    if (compact && mobileProgressFillRef.current) {
+      gsap.to(mobileProgressFillRef.current, {
+        scaleX: (activeIndex + 1) / deliverables.length,
+        duration: 0.3,
+        overwrite: true,
+      });
+    }
     prevIndexRef.current = activeIndex;
   }, [activeIndex]);
 
@@ -261,6 +268,13 @@ export default function DeliverablesSection() {
           const desktop = Boolean(conditions.desktop);
           const reduced = Boolean(conditions.reduced);
           const compact = phone || tablet;
+          // Touch scrolling stays native: no held stage, scroll-driven tab
+          // changes or spacer that can jump when Safari changes its toolbar.
+          if (compact) {
+            master.style.height = "";
+            scrollTriggerRef.current = null;
+            return;
+          }
           const exitHold = 0.9;
 
           const mediaStage = mediaStageRef.current;
@@ -483,7 +497,6 @@ export default function DeliverablesSection() {
 
     const start = scrollTrigger.start;
     const end = scrollTrigger.end;
-    const total = deliverables.length;
 
     const targetProgress = (index + 0.5) / deliverables.length;
     const targetScroll = start + (end - start) * targetProgress;
@@ -519,14 +532,14 @@ export default function DeliverablesSection() {
       tabIndex={0}
       aria-label="Deliverables and showcase"
       onKeyDown={handleKeyDown}
-      className="relative z-20 m-0 min-h-[100svh] w-full overflow-x-clip bg-white p-0 text-black outline-none pointer-events-auto"
+      className="relative z-20 m-0 min-h-0 lg:min-h-[100svh] w-full bg-white p-0 text-black outline-none pointer-events-auto"
     >
       <div
         ref={stickyRef}
-        className="mobile-scroll-sticky h-[100svh] min-h-[100svh] w-full overflow-hidden bg-white lg:h-[100dvh] lg:min-h-[100dvh]"
+        className="relative w-full bg-white lg:sticky lg:top-0 lg:h-[100dvh] lg:min-h-[100dvh] lg:overflow-hidden"
       >
-        <div className="relative z-[1] flex h-full w-full flex-col justify-start lg:justify-center overflow-hidden bg-white px-4 pt-12 pb-0 lg:py-0 sm:px-8 md:px-12">
-          <div className="w-full max-w-[1500px] mx-auto min-h-[calc(var(--nf-mobile-vh,100svh)*0.72)] lg:min-h-[72vh] flex flex-col justify-start lg:justify-center">
+        <div className="relative z-[1] flex lg:h-full w-full flex-col justify-start lg:justify-center overflow-hidden bg-white px-4 pt-12 pb-6 lg:py-0 sm:px-8 md:px-12">
+          <div className="w-full max-w-[1500px] mx-auto min-h-0 lg:min-h-[72vh] flex flex-col justify-start lg:justify-center">
             
             {/* Mobile Header Nav & Progress */}
             <div className="lg:hidden mx-auto flex w-full max-w-[540px] flex-col px-0 pt-[max(0.75rem,env(safe-area-inset-top))] mb-3">

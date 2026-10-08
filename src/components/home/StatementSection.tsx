@@ -310,13 +310,13 @@ export default function StatementSection() {
     <section
       id="statement"
       ref={sectionRef}
-      className="relative isolate z-40 -mt-[82svh] w-full bg-[#1677FF] p-0 text-black pointer-events-auto md:-mt-[80dvh]"
+      className="relative isolate z-40 mt-[6svh] w-full bg-[#1677FF] p-0 text-black pointer-events-auto lg:-mt-[80dvh]"
       aria-label="We make brands go wow"
     >
       <div
         ref={topStepRef}
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-[calc(100%-2px)] left-0 z-[50] h-[6svh] min-h-[6svh] w-full bg-[#1677FF] will-change-transform md:h-[30dvh] md:min-h-[30dvh]"
+        className="pointer-events-none absolute bottom-[calc(100%-2px)] left-0 z-[50] h-[6svh] min-h-[6svh] w-full bg-[#1677FF] will-change-transform lg:h-[30dvh] lg:min-h-[30dvh]"
         style={{
           clipPath: TOP_STEP_OPEN,
           WebkitClipPath: TOP_STEP_OPEN,
@@ -326,7 +326,7 @@ export default function StatementSection() {
       <div
         ref={bottomStepRef}
         aria-hidden="true"
-        className="pointer-events-none absolute left-0 top-[calc(100%-2px)] z-[50] h-[6svh] min-h-[6svh] w-full bg-[#1677FF] will-change-transform md:h-[30dvh] md:min-h-[30dvh]"
+        className="pointer-events-none absolute left-0 top-[calc(100%-2px)] z-[50] h-[6svh] min-h-[6svh] w-full bg-[#1677FF] will-change-transform lg:h-[30dvh] lg:min-h-[30dvh]"
         style={{
           clipPath: BOTTOM_STEP_OPEN,
           WebkitClipPath: BOTTOM_STEP_OPEN,
