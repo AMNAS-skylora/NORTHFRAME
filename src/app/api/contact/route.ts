@@ -1,3 +1,4 @@
+import { storeEnquiry } from "@/lib/cms/enquiries";
 import tls from "node:tls";
 import { NextResponse } from "next/server";
 
@@ -387,6 +388,7 @@ async function sendViaSmtp({
 }
 
 export async function POST(request: Request) {
+  let stored = false;
   try {
     const payload = (await request.json()) as ContactPayload;
 
@@ -429,6 +431,10 @@ export async function POST(request: Request) {
       );
     }
 
+    if (process.env.MONGODB_URI) {
+      await storeEnquiry({name,phone,email,projectDetails,services});
+      stored = true;
+    }
     const sender = cleanText(process.env.SMTP_USER, 180);
     const recipient = cleanText(process.env.CONTACT_TO_EMAIL, 180) || sender;
 
@@ -454,6 +460,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
+    if (stored) {
+      console.error("Enquiry saved; email notification unavailable.");
+      return NextResponse.json({ ok: true });
+    }
     console.error(
       "Contact SMTP error:",
       error instanceof Error ? error.message : "Unknown error"

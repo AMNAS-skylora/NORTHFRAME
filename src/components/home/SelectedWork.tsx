@@ -6,13 +6,17 @@ import { useLayoutEffect, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { workProjects } from "@/data/work";
+import { type WorkProject } from "@/data/work";
 import { ProjectCard } from "@/components/work/ProjectCard";
 import { TransitionLink } from "@/components/navigation/PageTransitionProvider";
 
 if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
-export default function SelectedWork() {
+export default function SelectedWork({
+  projects: workProjects,
+}: {
+  projects: WorkProject[];
+}) {
   const sectionRef = useRef<HTMLElement>(null);
   const shapeRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -27,7 +31,7 @@ export default function SelectedWork() {
       if (window.innerWidth < 1024) return;
 
       const projectCards = Array.from(
-        content.querySelectorAll<HTMLElement>("article.work-project-item")
+        content.querySelectorAll<HTMLElement>("article.work-project-item"),
       );
 
       const secondCard = projectCards[1];
@@ -35,7 +39,9 @@ export default function SelectedWork() {
       const cta = ctaRef.current;
       if (!secondCard || !thirdCard) return;
 
-      const thirdTop = Math.round(secondCard.offsetTop + secondCard.offsetHeight);
+      const thirdTop = Math.round(
+        secondCard.offsetTop + secondCard.offsetHeight,
+      );
       thirdCard.style.top = `${thirdTop}px`;
 
       if (cta) {
@@ -59,7 +65,7 @@ export default function SelectedWork() {
     });
 
     const projectCards = Array.from(
-      content.querySelectorAll<HTMLElement>("article.work-project-item")
+      content.querySelectorAll<HTMLElement>("article.work-project-item"),
     );
 
     projectCards.slice(0, 3).forEach((card) => observer.observe(card));
@@ -83,13 +89,17 @@ export default function SelectedWork() {
 
   useGSAP(
     () => {
-      if (!sectionRef.current || window.matchMedia(getReducedMotionQuery()).matches) return;
+      if (
+        !sectionRef.current ||
+        window.matchMedia(getReducedMotionQuery()).matches
+      )
+        return;
 
       const cards = gsap.utils.toArray<HTMLElement>(
-        sectionRef.current.querySelectorAll(".work-project-item")
+        sectionRef.current.querySelectorAll(".work-project-item"),
       );
       const mobileOuterItems = cards.filter(
-        (card) => !card.matches("article.work-project-item")
+        (card) => !card.matches("article.work-project-item"),
       );
       const media = gsap.matchMedia();
 
@@ -97,7 +107,7 @@ export default function SelectedWork() {
         y: number,
         duration: number,
         start: string,
-        items = cards
+        items = cards,
       ) => {
         items.forEach((card) => {
           gsap.fromTo(
@@ -118,71 +128,75 @@ export default function SelectedWork() {
                 once: true,
                 invalidateOnRefresh: true,
               },
-            }
+            },
           );
         });
       };
 
       media.add(
         "(max-width: 768px), (max-width: 1023px) and (hover: none) and (pointer: coarse)",
-        () => buildCardReveals(28, 0.62, "top 88%", mobileOuterItems)
+        () => buildCardReveals(28, 0.62, "top 88%", mobileOuterItems),
       );
-      media.add("(min-width: 769px) and (max-width: 1023px) and (hover: hover) and (pointer: fine)", () =>
-        buildCardReveals(16, 0.5, "top 92%")
+      media.add(
+        "(min-width: 769px) and (max-width: 1023px) and (hover: hover) and (pointer: fine)",
+        () => buildCardReveals(16, 0.5, "top 92%"),
       );
       media.add("(min-width: 1024px)", () =>
-        buildCardReveals(28, 0.62, "top 88%")
+        buildCardReveals(28, 0.62, "top 88%"),
       );
 
-      media.add("(min-width: 1024px) and (hover: hover) and (pointer: fine)", () => {
-        const shape = shapeRef.current;
-        const content = contentRef.current;
-        if (!shape || !content) return;
+      media.add(
+        "(min-width: 1024px) and (hover: hover) and (pointer: fine)",
+        () => {
+          const shape = shapeRef.current;
+          const content = contentRef.current;
+          if (!shape || !content) return;
 
-        const shapeTween = gsap.fromTo(
-          shape,
-          { yPercent: -0.12 },
-          {
-            yPercent: 0.12,
-            ease: "none",
-            force3D: true,
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 6.5,
-              invalidateOnRefresh: true,
+          const shapeTween = gsap.fromTo(
+            shape,
+            { yPercent: -0.12 },
+            {
+              yPercent: 0.12,
+              ease: "none",
+              force3D: true,
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 6.5,
+                invalidateOnRefresh: true,
+              },
             },
-          }
-        );
+          );
 
-        const contentTween = gsap.fromTo(
-          content,
-          { yPercent: 0.55 },
-          {
-            yPercent: -4.2,
-            ease: "none",
-            force3D: true,
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 0.78,
-              invalidateOnRefresh: true,
+          const contentTween = gsap.fromTo(
+            content,
+            { yPercent: 0.55 },
+            {
+              yPercent: -4.2,
+              ease: "none",
+              force3D: true,
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.78,
+                invalidateOnRefresh: true,
+              },
             },
-          }
-        );
+          );
 
-        return () => {
-          shapeTween.scrollTrigger?.kill();
-          shapeTween.kill();
-          contentTween.scrollTrigger?.kill();
-          contentTween.kill();
-        };
-      });
+          return () => {
+            shapeTween.scrollTrigger?.kill();
+            shapeTween.kill();
+            contentTween.scrollTrigger?.kill();
+            contentTween.kill();
+          };
+        },
+      );
       return () => media.revert();
     },
-    { scope: sectionRef }
+    { scope: sectionRef },
   );
 
   return (
@@ -243,23 +257,28 @@ export default function SelectedWork() {
           gridClass="lg:absolute lg:left-1/2 lg:right-auto lg:top-[clamp(780px,62vw,940px)] lg:w-[32%]"
         />
 
-        <div ref={ctaRef} className="work-project-item flex max-w-[390px] flex-col items-start gap-3 lg:absolute lg:left-[3%] lg:top-[clamp(820px,69vw,1050px)] lg:w-[30%]">
+        <div
+          ref={ctaRef}
+          className="work-project-item flex max-w-[390px] flex-col items-start gap-3 lg:absolute lg:left-[3%] lg:top-[clamp(820px,69vw,1050px)] lg:w-[30%]"
+        >
           <h3 className="font-montserrat text-xl font-semibold leading-snug tracking-tight sm:text-2xl">
             Think your brand belongs here too?
           </h3>
           <p className="font-sans text-sm leading-relaxed text-black/70 sm:text-base">
-            Let’s get to know your brand, your ideas, and what you’re aiming for.
-            We’re here to turn good ideas into something that makes people say “wow.”
+            Let’s get to know your brand, your ideas, and what you’re aiming
+            for. We’re here to turn good ideas into something that makes people
+            say “wow.”
           </p>
           <TransitionLink
             href="/#contact"
             className="group inline-flex min-h-10 items-center gap-2 border-b border-black/30 py-1 font-sans text-sm font-medium transition-colors lg:hover:border-[#1677FF] lg:hover:text-[#1677FF]"
           >
             <span>Let’s talk</span>
-            <span className="transition-transform duration-200 lg:group-hover:translate-x-1">→</span>
+            <span className="transition-transform duration-200 lg:group-hover:translate-x-1">
+              →
+            </span>
           </TransitionLink>
         </div>
-
       </div>
     </section>
   );

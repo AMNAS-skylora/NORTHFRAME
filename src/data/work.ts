@@ -1,4 +1,5 @@
 export interface WorkProject {
+  video?: string;
   id: number;
   slug: string;
   title: string;
@@ -96,8 +97,7 @@ export const editorialWorkProjects: EditorialWorkProject[] = [
     slug: "nexon",
     title: "NEXON",
     category: "CAMPAIGN",
-    description:
-      "A high-impact campaign that connects brands with people.",
+    description: "A high-impact campaign that connects brands with people.",
     image: "/images/work/work-03-creative-production.jpg",
     imageAlt: "NEXON Advertising & Digital Billboard Campaign",
     gridCols: "grid-cols-1 lg:grid-cols-[43%_57%]",
@@ -126,8 +126,7 @@ export const editorialWorkProjects: EditorialWorkProject[] = [
     slug: "lume",
     title: "LUME",
     category: "DIGITAL EXPERIENCE",
-    description:
-      "Digital products that make complex ideas simple and human.",
+    description: "Digital products that make complex ideas simple and human.",
     image: "/images/work/work-02-digital-marketing.jpg",
     imageAlt: "LUME Mobile Application & Digital Experience",
     gridCols: "grid-cols-1 lg:grid-cols-[41%_59%]",
@@ -139,6 +138,7 @@ export const editorialWorkProjects: EditorialWorkProject[] = [
 ];
 
 export interface WorkDetail {
+  video?: string;
   slug: string;
   title: string;
   category: string;

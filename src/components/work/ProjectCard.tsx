@@ -2,6 +2,7 @@
 
 import { getReducedMotionQuery } from "@/components/motion/motionPreference";
 
+import WorkVideo from "./WorkVideo";
 import { expandProjectImage } from "./expandProjectImage";
 import { useRef } from "react";
 import { revealOnce } from "@/components/motion/revealOnce";
@@ -87,7 +88,7 @@ export function ProjectCard({
               ease: "power3.out",
               force3D: true,
             },
-            0
+            0,
           )
           .to(
             metaItems,
@@ -99,11 +100,11 @@ export function ProjectCard({
               ease: "expo.out",
               force3D: true,
             },
-            0.3
+            0.3,
           );
 
         const mobileLike = window.matchMedia(
-          "(max-width: 768px), (max-width: 1023px) and (hover: none) and (pointer: coarse)"
+          "(max-width: 768px), (max-width: 1023px) and (hover: none) and (pointer: coarse)",
         ).matches;
 
         let stopReveal = () => {};
@@ -132,28 +133,31 @@ export function ProjectCard({
 
       // Keep per-frame parallax on desktop only. Mobile keeps the same reveal
       // without a continuous scrub transform fighting touch scrolling.
-      mm.add("(min-width: 1024px) and (hover: hover) and (pointer: fine)", () => {
-        gsap.fromTo(
-          imageRef.current,
-          { yPercent: -1.5 },
-          {
-            yPercent: 1.5,
-            ease: "none",
-            force3D: true,
-            scrollTrigger: {
-              trigger: cardRef.current,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 0.6,
-              invalidateOnRefresh: true,
+      mm.add(
+        "(min-width: 1024px) and (hover: hover) and (pointer: fine)",
+        () => {
+          gsap.fromTo(
+            imageRef.current,
+            { yPercent: -1.5 },
+            {
+              yPercent: 1.5,
+              ease: "none",
+              force3D: true,
+              scrollTrigger: {
+                trigger: cardRef.current,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.6,
+                invalidateOnRefresh: true,
+              },
             },
-          }
-        );
-      });
+          );
+        },
+      );
 
       return () => mm.revert();
     },
-    { scope: cardRef }
+    { scope: cardRef },
   );
 
   return (
@@ -166,7 +170,13 @@ export function ProjectCard({
       <TransitionLink
         href={`/work/${project.slug}`}
         onClick={(event) => {
-          if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+          if (
+            event.button === 0 &&
+            !event.metaKey &&
+            !event.ctrlKey &&
+            !event.shiftKey &&
+            !event.altKey
+          ) {
             expandProjectImage(imageRef.current, project.slug);
           }
         }}
@@ -182,20 +192,32 @@ export function ProjectCard({
                 clipPath: "polygon(12% 0, 100% 0, 100% 100%, 0 100%, 0 12%)",
               }}
             >
-            <Image
-              ref={imageRef}
-              fill
-              src={project.image}
-              alt={project.title}
-              sizes="(max-width: 767px) 88vw, (max-width: 1023px) 92vw, 30vw"
-              className="object-cover scale-[1.035] lg:transition-transform lg:duration-700 lg:ease-out lg:group-hover:scale-[1.055]"
-            />
+              <Image
+                ref={imageRef}
+                fill
+                src={project.image}
+                alt={project.title}
+                sizes="(max-width: 767px) 88vw, (max-width: 1023px) 92vw, 30vw"
+                className="object-cover scale-[1.035] lg:transition-transform lg:duration-700 lg:ease-out lg:group-hover:scale-[1.055]"
+              />
+              {project.video && (
+                <WorkVideo
+                  src={project.video}
+                  poster={project.image}
+                  className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+                />
+              )}
             </div>
           </div>
 
           {/* PROJECT METADATA DIRECTLY ATTACHED BELOW IMAGE */}
-          <div ref={metaRef} className="mt-2 flex flex-col items-start gap-[4px]">
-            <h3 className={`text-[clamp(18px,1.5vw,22px)] font-normal leading-none tracking-[-0.02em] ${dark ? "text-white" : "text-black"}`}>
+          <div
+            ref={metaRef}
+            className="mt-2 flex flex-col items-start gap-[4px]"
+          >
+            <h3
+              className={`text-[clamp(18px,1.5vw,22px)] font-normal leading-none tracking-[-0.02em] ${dark ? "text-white" : "text-black"}`}
+            >
               {project.title}
             </h3>
 
