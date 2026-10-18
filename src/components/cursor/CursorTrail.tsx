@@ -69,10 +69,16 @@ export default function CursorTrail() {
 
     // Physics trail settings
     const NUM_NODES = 24;
+    // Small, evenly spaced square particles instead of dashed strokes.
+    const BOX_SIZE = 5;
+    const BOX_GAP = 9;
+    const BOX_STEP = BOX_SIZE + BOX_GAP;
+    const MAX_BOXES = 24;
     const nodes: NodePoint[] = [];
     const target = { x: -1000, y: -1000 };
     let isMouseActive = false;
     let lastMouseMoveTime = 0;
+    let lastFrameTime = performance.now();
 
     // Layer B delayed lerp position
     const posB = { x: 50, y: 50 };
@@ -127,13 +133,16 @@ export default function CursorTrail() {
 
       const now = performance.now();
       const idleTime = now - lastMouseMoveTime;
+      // Time-corrected easing keeps the trail consistent on 60/120Hz displays.
+      const frameFactor = Math.min(Math.max((now - lastFrameTime) / (1000 / 60), 0), 2);
+      lastFrameTime = now;
 
       // Smooth lerp physics
-      const easeHead = 0.45;
+      const easeHead = 1 - Math.pow(1 - 0.45, frameFactor);
       nodes[0].x += (target.x - nodes[0].x) * easeHead;
       nodes[0].y += (target.y - nodes[0].y) * easeHead;
 
-      const easeTail = 0.42;
+      const easeTail = 1 - Math.pow(1 - 0.42, frameFactor);
       for (let i = 1; i < NUM_NODES; i++) {
         nodes[i].x += (nodes[i - 1].x - nodes[i].x) * easeTail;
         nodes[i].y += (nodes[i - 1].y - nodes[i].y) * easeTail;
@@ -170,45 +179,47 @@ export default function CursorTrail() {
       ctx.save();
       ctx.scale(dpr, dpr);
 
-      ctx.setLineDash([6, 4]);
-      ctx.lineCap = "butt";
-      ctx.lineJoin = "miter";
-
       const { head, tail } = palettes[theme];
 
-      // Reveal the palette of the surface below the pointer.
-      for (let i = 0; i < NUM_NODES - 1; i++) {
+      // Sample along the smoothed path at a fixed distance so squares retain
+      // their spacing even when the pointer accelerates or slows down.
+      let distanceToNext = 0;
+      let boxIndex = 0;
+
+      for (let i = 0; i < NUM_NODES - 1 && boxIndex < MAX_BOXES; i++) {
         const p1 = nodes[i];
         const p2 = nodes[i + 1];
+        const dx = p2.x - p1.x;
+        const dy = p2.y - p1.y;
+        const segmentLength = Math.hypot(dx, dy);
+        if (segmentLength < 0.5) continue;
 
-        const segDist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
-        if (segDist < 0.5) continue;
+        let traveled = distanceToNext;
+        while (traveled <= segmentLength && boxIndex < MAX_BOXES) {
+          const t = traveled / segmentLength;
+          const x = p1.x + dx * t;
+          const y = p1.y + dy * t;
+          const progress = 1 - boxIndex / MAX_BOXES;
+          const alpha = Math.pow(progress, 0.85) * globalAlpha;
 
-        const progress = 1 - i / (NUM_NODES - 1);
-        const segmentAlpha = Math.pow(progress, 0.85) * globalAlpha;
+          const r = Math.round(head[0] * progress + tail[0] * (1 - progress));
+          const g = Math.round(head[1] * progress + tail[1] * (1 - progress));
+          const b = Math.round(head[2] * progress + tail[2] * (1 - progress));
 
-        ctx.lineWidth = 2 + progress * 1.2;
-        
-        const r = Math.round(head[0] * progress + tail[0] * (1 - progress));
-        const g = Math.round(head[1] * progress + tail[1] * (1 - progress));
-        const b = Math.round(head[2] * progress + tail[2] * (1 - progress));
+          // Dark outline keeps white squares legible over images and videos.
+          if (theme === "image") {
+            ctx.fillStyle = `rgba(0, 0, 0, ${(alpha * 0.6).toFixed(3)})`;
+            ctx.fillRect(x - BOX_SIZE / 2 - 1, y - BOX_SIZE / 2 - 1, BOX_SIZE + 2, BOX_SIZE + 2);
+          }
 
-        if (theme === "image") {
-          ctx.strokeStyle = `rgba(0, 0, 0, ${(segmentAlpha * 0.6).toFixed(3)})`;
-          ctx.lineWidth += 2;
-          ctx.beginPath();
-          ctx.moveTo(p1.x, p1.y);
-          ctx.lineTo(p2.x, p2.y);
-          ctx.stroke();
-          ctx.lineWidth -= 2;
+          ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(3)})`;
+          ctx.fillRect(x - BOX_SIZE / 2, y - BOX_SIZE / 2, BOX_SIZE, BOX_SIZE);
+
+          boxIndex++;
+          traveled += BOX_STEP;
         }
 
-        ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${segmentAlpha.toFixed(3)})`;
-
-        ctx.beginPath();
-        ctx.moveTo(p1.x, p1.y);
-        ctx.lineTo(p2.x, p2.y);
-        ctx.stroke();
+        distanceToNext = traveled - segmentLength;
       }
 
       ctx.restore();
