@@ -10,6 +10,11 @@ type Enquiry = {
   services: string[];
   status: string;
   createdAt: string;
+  notificationStatus?: "pending" | "sending" | "sent" | "failed";
+  notificationAttempts?: number;
+  notificationProvider?: string | null;
+  notificationError?: string | null;
+  notificationSentAt?: string | null;
 };
 async function api(path: string, options?: RequestInit) {
   const r = await fetch("/api/admin/" + path, {
@@ -476,6 +481,45 @@ export default function AdminPanel() {
                       <option key={v}>{v}</option>
                     ))}
                   </select>
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+                  <span className={`rounded-md px-2.5 py-1 font-semibold ${
+                    q.notificationStatus === "sent"
+                      ? "bg-green-100 text-green-800"
+                      : q.notificationStatus === "failed"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-amber-100 text-amber-900"
+                  }`}>
+                    Email alert: {q.notificationStatus === "sent"
+                      ? "Sent"
+                      : q.notificationStatus === "failed"
+                        ? "Failed"
+                        : q.notificationStatus === "sending"
+                          ? "Sending"
+                          : q.notificationStatus === "pending"
+                            ? "Pending"
+                            : "Unverified (older enquiry)"}
+                  </span>
+                  {q.notificationStatus !== "sent" && q.notificationStatus !== "sending" && (
+                    <button
+                      type="button"
+                      disabled={busy}
+                      className="rounded-lg border border-blue-600 px-3 py-1.5 font-semibold text-blue-700 hover:bg-blue-50 disabled:opacity-50"
+                      onClick={() => action(async () => {
+                        await api("enquiries/notify", {
+                          method: "POST",
+                          body: JSON.stringify({ id: q._id }),
+                        });
+                        setEnquiries(await api("enquiries"));
+                        setMessage("Enquiry email alert sent.");
+                      })}
+                    >
+                      Send email alert
+                    </button>
+                  )}
+                  {q.notificationStatus === "failed" && q.notificationError && (
+                    <span className="text-red-700">{q.notificationError}</span>
+                  )}
                 </div>
                 <p className="my-3 text-sm">{q.services.join(", ")}</p>
                 <p className="whitespace-pre-wrap text-sm text-slate-600">

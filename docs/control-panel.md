@@ -21,7 +21,29 @@ Open `/admin`, sign in, and edit works. On the first save, the bundled portfolio
 
 The homepage, work list and detail pages read published content on each request. The public site keeps its bundled portfolio when Atlas is unconfigured or unreachable; the control panel returns an unavailable message and never reports a failed write as saved. No demo password is enabled. Login attempts are limited to 10 per account per 10-minute window across all server instances. Session cookies expire after 8 hours. Sign out clears the current browser cookie; rotate the session secret to invalidate all sessions.
 
-Contact submissions are stored in Atlas before optional email delivery. The inbox lists the newest 100 enquiries, with New / Contacted / Closed status. Existing inquiries from before this integration are not imported. No live email is sent by the automated tests.
+Contact submissions are stored in Atlas before notification is attempted. The inbox lists the newest 100 enquiries, with New / Contacted / Closed status **and a separate email alert status** (Pending, Sent, Failed, or Unverified for records saved before notification tracking). The public form confirms an enquiry was saved even if email delivery fails, but does not claim the email was sent. Failed email delivery can be retried by an authenticated admin with the **Send email alert** button; no old leads are automatically emailed. No live email is sent by the automated tests.
+
+## Contact form email setup
+
+**Recommended for a hosted deployment: Resend's HTTPS API.** The project sends transactional email from a server-side Next.js route with no extra Node package. Set the following secrets in your host's production and preview environments (or `.env.local` for local testing):
+
+```dotenv
+MONGODB_URI=mongodb+srv://...
+MONGODB_DB=northframe
+CONTACT_TO_EMAIL=your-inbox@example.com
+RESEND_API_KEY=re_your_private_key
+CONTACT_FROM_EMAIL=notifications@your-verified-domain.com
+```
+
+1. Add your sender domain in your Resend dashboard, complete its DNS verification, and obtain an API key with permission to send email.
+2. Set `CONTACT_FROM_EMAIL` to an email address on **that verified domain**, and set `CONTACT_TO_EMAIL` to the inbox that should receive the customer's enquiry. Do **not** use a Gmail address as a Resend sender unless you control and can verify that domain.
+3. Add these values to Vercel **Project → Settings → Environment Variables** and redeploy the project. Never prefix server secrets with `NEXT_PUBLIC_` or commit them. SMTP variables are ignored if `RESEND_API_KEY` is configured.
+4. Submit one test enquiry from the real site. Verify it in `/admin → Enquiries` and check **Email alert: Sent**; then verify inbox/spam folder and provider logs. **Sent means the mail provider accepted it, not that final inbox delivery is guaranteed.**
+5. If the status is Failed, check the Vercel function logs and the sending provider dashboard, repair the configuration, and use the admin **Send email alert** button. Older enquiries without status can also be sent manually.
+
+**Alternative: Gmail SMTP.** Leave `RESEND_API_KEY` empty and configure `SMTP_USER`, `SMTP_APP_PASSWORD`, `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=465`, and `SMTP_SECURE=true`. Gmail requires a suitable Google App Password and account eligibility; do not use your normal Gmail login password. `CONTACT_TO_EMAIL` can differ from `SMTP_USER`. SMTP transport currently supports implicit TLS on port 465 only. A serverless host may have provider/network restrictions, so the HTTPS option is generally more reliable.
+
+If neither provider is configured but MongoDB is working, the enquiry is **still saved** with Failed email status and is visible to the admin; the customer does not need to submit twice. If MongoDB and email are both unavailable, the endpoint returns an error.
 
 ## Verify with your accounts
 

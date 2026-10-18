@@ -299,7 +299,7 @@ export default function ContactSection() {
 
       setSubmissionState("success");
       setSubmissionNotice(
-        "Enquiry sent successfully. We’ll get back to you shortly."
+        result.message || "Your enquiry was received. We’ll get back to you shortly."
       );
       setSelectedServices([]);
       setName("");

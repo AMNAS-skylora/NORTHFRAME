@@ -14,7 +14,8 @@
     "test:intro-recovery": "node scripts/check-intro-recovery.mjs",
     "test:service-steps": "node scripts/check-service-steps.mjs",
     "test:motion-preference": "node scripts/check-motion-preference.mjs",
-    "test:cms": "node scripts/check-cms.mjs"
+    "test:cms": "node scripts/check-cms.mjs",
+    "test:contact-mail": "node scripts/check-contact-mail.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
