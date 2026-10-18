@@ -25,7 +25,6 @@ export default function WatWeDoen() {
   const wrapperRef = useRef<HTMLElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const panelsRef = useRef<(HTMLElement | null)[]>([]);
-  const mediaRefs = useRef<(HTMLDivElement | null)[]>([]);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const motionReady = useMobileMotionReady();
 
@@ -161,16 +160,6 @@ export default function WatWeDoen() {
               willChange: mobile || reduced ? "auto" : "clip-path",
             });
 
-            const media = mediaRefs.current[index];
-            if (media) {
-              gsap.set(media, {
-                scale: !reduced && index === 0 ? 1.035 : 1,
-                transformOrigin: "center center",
-                force3D: true,
-                willChange: reduced ? "auto" : "transform",
-              });
-            }
-
             if (index === 0) {
               const introText = panel.querySelectorAll(".first-service-intro");
               gsap.set(introText, {
@@ -223,25 +212,11 @@ export default function WatWeDoen() {
 
           services.forEach((_, index) => {
             const panel = panelsRef.current[index];
-            const media = mediaRefs.current[index];
             if (!panel) return;
 
             if (index === 0) {
               const introText = panel.querySelectorAll(".first-service-intro");
               if (!reduced) {
-                if (media) {
-                  timeline.to(
-                    media,
-                    {
-                      scale: 1,
-                      duration: 0.58,
-                      ease: "power2.out",
-                      force3D: true,
-                    },
-                    0
-                  );
-                }
-
                 timeline.to(
                   introText,
                   {
@@ -281,19 +256,6 @@ export default function WatWeDoen() {
                   WebkitClipPath: OPEN_STEPS,
                   duration: revealDuration,
                   ease: "none",
-                },
-                segmentStart
-              );
-            }
-
-            if (!reduced && media) {
-              timeline.to(
-                media,
-                {
-                  scale: 1.095,
-                  duration: 1,
-                  ease: "none",
-                  force3D: true,
                 },
                 segmentStart
               );
@@ -361,12 +323,6 @@ export default function WatWeDoen() {
                 });
               }
 
-              const media = mediaRefs.current[index];
-              if (media) {
-                gsap.set(media, {
-                  clearProps: "will-change,transform",
-                });
-              }
             });
           };
         }
@@ -407,19 +363,28 @@ export default function WatWeDoen() {
             >
               <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                 <div
-                  ref={(element) => {
-                    mediaRefs.current[index] = element;
-                  }}
                   className="relative h-full w-full overflow-hidden bg-[#0B1525]"
                   style={{ backgroundImage: "linear-gradient(135deg, #0B1525 0%, #07111B 60%, #101D2A 100%)" }}
                 >
+                  {/* Ambient edge fill: same uploaded image, softly blurred behind the fully visible media. */}
+                  <Image
+                    src={service.image}
+                    alt=""
+                    fill
+                    sizes="100vw"
+                    aria-hidden="true"
+                    className="absolute inset-0 object-cover scale-110 blur-2xl opacity-40 pointer-events-none"
+                    onError={(event) => {
+                      event.currentTarget.style.visibility = "hidden";
+                    }}
+                  />
                   <Image
                     src={service.image}
                     alt={service.imageAlt || service.title}
                     fill
                     priority={index === 0}
                     sizes="100vw"
-                    className="panel-image object-cover select-none pointer-events-none"
+                    className="panel-image object-contain select-none pointer-events-none"
                     onError={(event) => {
                       // The optional poster may not yet be committed with the video.
                       // Hide broken-image icons; retain the background and allow the MP4 to play.
@@ -442,7 +407,7 @@ export default function WatWeDoen() {
                       disablePictureInPicture
                       aria-hidden="true"
                       tabIndex={-1}
-                      className="panel-video absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300 pointer-events-none"
+                      className="panel-video absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity duration-300 pointer-events-none"
                       style={{
                         objectPosition: service.objectPosition || "center center",
                       }}
