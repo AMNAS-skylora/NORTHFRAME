@@ -33,7 +33,7 @@ export const services: Service[] = [
     paragraph:
       "Identity built with intent, so your business looks as established as it is. We bring together brand identity, logo design, packaging design and brand guidelines to create a consistent presence.",
     image: "/images/services/branding.webp",
-    video: "/videos/services/branding.mp4",
+    video: "/images/services/branding.mp4",
     imageAlt: "Brand Identity showcase with refined design identity",
     objectPosition: "center center",
   },
@@ -76,7 +76,7 @@ export const services: Service[] = [
     paragraph:
       "Performance-led campaigns that turn attention into real enquiries and revenue. Our work brings together social media marketing, content marketing, campaign management, performance marketing and SEO.",
     image: "/images/services/digital-marketing.webp",
-    video: "/videos/services/digital-marketing.mp4",
+    video: "/images/services/digital-marketing.mp4",
     imageAlt: "Digital marketing analytics and performance metrics",
     objectPosition: "center center",
   },
@@ -98,7 +98,7 @@ export const services: Service[] = [
     paragraph:
       "Everything that carries your brand online, built to load fast, work on every device and turn visits into enquiries. We deliver websites, ecommerce, landing pages, marketing automation and AI solutions.",
     image: "/images/services/technology.webp",
-    video: "/videos/services/technology.mp4",
+    video: "/images/services/technology.mp4",
     imageAlt: "Technology and website development interface",
     objectPosition: "center center",
   },
