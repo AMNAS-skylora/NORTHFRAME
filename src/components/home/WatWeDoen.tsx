@@ -25,7 +25,8 @@ export default function WatWeDoen() {
   const wrapperRef = useRef<HTMLElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const panelsRef = useRef<(HTMLElement | null)[]>([]);
-  const imagesRef = useRef<(HTMLImageElement | null)[]>([]);
+  const mediaRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const motionReady = useMobileMotionReady();
 
   // Mobile and desktop share one GSAP timeline below. This avoids a second
@@ -82,6 +83,69 @@ export default function WatWeDoen() {
 
           syncMobileStageHeight();
 
+          // Only the service currently visible in the scroll story can play.
+          // Other panels retain their existing image posters.
+          let sectionInView = false;
+          let activePanelIndex = -1;
+          let currentTimelineTime = 0;
+
+          const pauseVideos = () => {
+            videoRefs.current.forEach((video) => {
+              if (!video) return;
+              video.dataset.serviceActive = "false";
+              video.pause();
+              video.style.opacity = "0";
+            });
+            activePanelIndex = -1;
+          };
+
+          const syncVideoPlayback = () => {
+            if (!sectionInView || document.hidden || reduced) {
+              if (activePanelIndex !== -1) pauseVideos();
+              return;
+            }
+
+            // Change media only when the next panel is mostly revealed.
+            // This uses the scrubbed GSAP playhead, not raw scroll velocity.
+            let visibleIndex = 0;
+            for (let index = 1; index < panelCount; index++) {
+              const revealStart = introSegment + index - 1;
+              const switchTime = revealStart + (reduced ? 0 : revealDuration * 0.55);
+              if (currentTimelineTime >= switchTime) visibleIndex = index;
+            }
+
+            if (activePanelIndex === visibleIndex) return;
+            activePanelIndex = visibleIndex;
+
+            videoRefs.current.forEach((video, index) => {
+              if (!video) return;
+              const isActive = index === visibleIndex;
+              video.dataset.serviceActive = isActive ? "true" : "false";
+              if (!isActive) {
+                video.pause();
+                video.style.opacity = "0";
+              }
+            });
+
+            const activeVideo = videoRefs.current[visibleIndex];
+            if (!activeVideo || activeVideo.error) return;
+
+            // Preload only on activation. Missing videos leave the poster visible.
+            try {
+              if (activeVideo.readyState >= HTMLMediaElement.HAVE_METADATA) {
+                activeVideo.currentTime = 0;
+              }
+              const playback = activeVideo.play();
+              if (playback) {
+                void playback.catch(() => {
+                  activeVideo.style.opacity = "0";
+                });
+              }
+            } catch {
+              activeVideo.style.opacity = "0";
+            }
+          };
+
           panelsRef.current.forEach((panel, index) => {
             if (!panel) return;
 
@@ -97,9 +161,9 @@ export default function WatWeDoen() {
               willChange: mobile || reduced ? "auto" : "clip-path",
             });
 
-            const image = imagesRef.current[index];
-            if (image) {
-              gsap.set(image, {
+            const media = mediaRefs.current[index];
+            if (media) {
+              gsap.set(media, {
                 scale: !reduced && index === 0 ? 1.035 : 1,
                 transformOrigin: "center center",
                 force3D: true,
@@ -133,20 +197,41 @@ export default function WatWeDoen() {
               fastScrollEnd: false,
               refreshPriority: 2,
               onRefreshInit: syncMobileStageHeight,
+              onRefresh: (self) => {
+                sectionInView = self.isActive;
+                if (sectionInView) syncVideoPlayback();
+                else pauseVideos();
+              },
+              onEnter: () => {
+                sectionInView = true;
+                syncVideoPlayback();
+              },
+              onEnterBack: () => {
+                sectionInView = true;
+                syncVideoPlayback();
+              },
+              onLeave: () => {
+                sectionInView = false;
+                pauseVideos();
+              },
+              onLeaveBack: () => {
+                sectionInView = false;
+                pauseVideos();
+              },
             },
           });
 
           services.forEach((_, index) => {
             const panel = panelsRef.current[index];
-            const image = imagesRef.current[index];
+            const media = mediaRefs.current[index];
             if (!panel) return;
 
             if (index === 0) {
               const introText = panel.querySelectorAll(".first-service-intro");
               if (!reduced) {
-                if (image) {
+                if (media) {
                   timeline.to(
-                    image,
+                    media,
                     {
                       scale: 1,
                       duration: 0.58,
@@ -201,9 +286,9 @@ export default function WatWeDoen() {
               );
             }
 
-            if (!reduced && image) {
+            if (!reduced && media) {
               timeline.to(
-                image,
+                media,
                 {
                   scale: 1.095,
                   duration: 1,
@@ -225,6 +310,21 @@ export default function WatWeDoen() {
             );
           });
 
+          timeline.eventCallback("onUpdate", () => {
+            currentTimelineTime = timeline.time();
+            syncVideoPlayback();
+          });
+
+          const handleVisibilityChange = () => {
+            if (document.hidden) pauseVideos();
+            else {
+              sectionInView = Boolean(timeline.scrollTrigger?.isActive);
+              currentTimelineTime = timeline.time();
+              syncVideoPlayback();
+            }
+          };
+          document.addEventListener("visibilitychange", handleVisibilityChange);
+
           let firstFrame = 0;
           let secondFrame = 0;
 
@@ -237,6 +337,8 @@ export default function WatWeDoen() {
           return () => {
             cancelAnimationFrame(firstFrame);
             cancelAnimationFrame(secondFrame);
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+            pauseVideos();
             wrapper.style.height = "";
             timeline.scrollTrigger?.kill();
             timeline.kill();
@@ -259,9 +361,9 @@ export default function WatWeDoen() {
                 });
               }
 
-              const image = imagesRef.current[index];
-              if (image) {
-                gsap.set(image, {
+              const media = mediaRefs.current[index];
+              if (media) {
+                gsap.set(media, {
                   clearProps: "will-change,transform",
                 });
               }
@@ -304,11 +406,13 @@ export default function WatWeDoen() {
               }}
             >
               <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                <div className="relative h-full w-full overflow-hidden">
+                <div
+                  ref={(element) => {
+                    mediaRefs.current[index] = element;
+                  }}
+                  className="relative h-full w-full overflow-hidden"
+                >
                   <Image
-                    ref={(element) => {
-                      imagesRef.current[index] = element;
-                    }}
                     src={service.image}
                     alt={service.imageAlt || service.title}
                     fill
@@ -319,6 +423,40 @@ export default function WatWeDoen() {
                       objectPosition: service.objectPosition || "center center",
                     }}
                   />
+                  {service.video && (
+                    <video
+                      ref={(element) => {
+                        videoRefs.current[index] = element;
+                      }}
+                      src={service.video}
+                      muted
+                      playsInline
+                      loop
+                      preload="none"
+                      disablePictureInPicture
+                      aria-hidden="true"
+                      tabIndex={-1}
+                      className="panel-video absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300 pointer-events-none"
+                      style={{
+                        objectPosition: service.objectPosition || "center center",
+                      }}
+                      onPlaying={(event) => {
+                        const video = event.currentTarget;
+                        if (video.dataset.serviceActive === "true" && !document.hidden) {
+                          video.style.opacity = "1";
+                        } else {
+                          video.pause();
+                          video.style.opacity = "0";
+                        }
+                      }}
+                      onPause={(event) => {
+                        event.currentTarget.style.opacity = "0";
+                      }}
+                      onError={(event) => {
+                        event.currentTarget.style.opacity = "0";
+                      }}
+                    />
+                  )}
                 </div>
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/72 via-black/12 to-black/10" />

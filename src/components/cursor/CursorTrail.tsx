@@ -70,8 +70,8 @@ export default function CursorTrail() {
     // Physics trail settings
     const NUM_NODES = 24;
     // Small, evenly spaced square particles instead of dashed strokes.
-    const BOX_SIZE = 5;
-    const BOX_GAP = 9;
+    const BOX_SIZE = 9;
+    const BOX_GAP = 10;
     const BOX_STEP = BOX_SIZE + BOX_GAP;
     const MAX_BOXES = 24;
     const nodes: NodePoint[] = [];
