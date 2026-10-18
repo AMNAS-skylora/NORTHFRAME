@@ -76,12 +76,21 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
         {/* Service Showcase Image */}
         {service.image && (
           <div className="relative w-full h-64 sm:h-[500px] overflow-hidden border border-white/10 bg-[#080E18] mt-4">
+            {/* Softly fill the stage edges without cropping the uploaded asset itself. */}
+            <Image
+              src={service.image}
+              alt=""
+              fill
+              aria-hidden="true"
+              className="object-cover scale-110 blur-2xl opacity-40"
+              sizes="(max-width: 1280px) 100vw, 1280px"
+            />
             <Image
               src={service.image}
               alt={service.imageAlt || service.title}
               fill
               priority
-              className="object-cover"
+              className="object-contain"
               sizes="(max-width: 1280px) 100vw, 1280px"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#05070B] via-transparent to-transparent opacity-60" />
