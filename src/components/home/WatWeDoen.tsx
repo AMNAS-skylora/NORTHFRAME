@@ -366,28 +366,16 @@ export default function WatWeDoen() {
                   className="relative h-full w-full overflow-hidden bg-[#0B1525]"
                   style={{ backgroundImage: "linear-gradient(135deg, #0B1525 0%, #07111B 60%, #101D2A 100%)" }}
                 >
-                  {/* Ambient edge fill: same uploaded image, softly blurred behind the fully visible media. */}
-                  <Image
-                    src={service.image}
-                    alt=""
-                    fill
-                    sizes="100vw"
-                    aria-hidden="true"
-                    className="absolute inset-0 object-cover scale-110 blur-2xl opacity-40 pointer-events-none"
-                    onError={(event) => {
-                      event.currentTarget.style.visibility = "hidden";
-                    }}
-                  />
                   <Image
                     src={service.image}
                     alt={service.imageAlt || service.title}
                     fill
                     priority={index === 0}
                     sizes="100vw"
-                    className="panel-image object-contain select-none pointer-events-none"
+                    className="panel-image object-cover select-none pointer-events-none"
                     onError={(event) => {
                       // The optional poster may not yet be committed with the video.
-                      // Hide broken-image icons; retain the background and allow the MP4 to play.
+                      // Keep a dark stage on media load failures while the video can still play.
                       event.currentTarget.style.visibility = "hidden";
                     }}
                     style={{
@@ -407,7 +395,7 @@ export default function WatWeDoen() {
                       disablePictureInPicture
                       aria-hidden="true"
                       tabIndex={-1}
-                      className="panel-video absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity duration-300 pointer-events-none"
+                      className="panel-video absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300 pointer-events-none"
                       style={{
                         objectPosition: service.objectPosition || "center center",
                       }}
