@@ -410,7 +410,8 @@ export default function WatWeDoen() {
                   ref={(element) => {
                     mediaRefs.current[index] = element;
                   }}
-                  className="relative h-full w-full overflow-hidden"
+                  className="relative h-full w-full overflow-hidden bg-[#0B1525]"
+                  style={{ backgroundImage: "linear-gradient(135deg, #0B1525 0%, #07111B 60%, #101D2A 100%)" }}
                 >
                   <Image
                     src={service.image}
@@ -419,6 +420,11 @@ export default function WatWeDoen() {
                     priority={index === 0}
                     sizes="100vw"
                     className="panel-image object-cover select-none pointer-events-none"
+                    onError={(event) => {
+                      // The optional poster may not yet be committed with the video.
+                      // Hide broken-image icons; retain the background and allow the MP4 to play.
+                      event.currentTarget.style.visibility = "hidden";
+                    }}
                     style={{
                       objectPosition: service.objectPosition || "center center",
                     }}
